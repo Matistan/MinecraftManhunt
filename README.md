@@ -28,6 +28,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - Compass has two modes:
 - - Tracks every speedrunner individually
 - - Or tracks the nearest one
+- You can vote to pause the game! During that time, no one can move. Then you can vote to unpause and continue playing!
 
 ## How to use it
 
