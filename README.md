@@ -37,14 +37,14 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 
 ## Commands
 
-- /manhunt add <player name> <role> - adds a player with a specified role
-- /manhunt remove <player name> - removes a player
-- /manhunt start - starts a game
-- /manhunt reset - resets a game
-- /manhunt pause - pauses a game
-- /manhunt unpause - resumes a game, if it's stopped
-- /manhunt list - shows a list of players in a manhunt game with their roles
-- /manhunt help - shows a list of manhunt commands
+- `/manhunt add <player name> <role>` - adds a player with a specified role
+- `/manhunt remove <player name>` - removes a player
+- `/manhunt start` - starts a game
+- `/manhunt reset` - resets a game
+- `/manhunt pause` - pauses a game
+- `/manhunt unpause` - resumes a game, if it's stopped
+- `/manhunt list` - shows a list of players in a manhunt game with their roles
+- `/manhunt help` - shows a list of manhunt commands
 
 ### Bugs & Issues
 
