@@ -20,29 +20,28 @@ import java.util.*;
 
 public class ManhuntCommand implements CommandExecutor {
     private final Main main;
-    public static List<String> hunters = new ArrayList<>();
-    public static List<String> speedrunners = new ArrayList<>();
-    public static List<String> CompassChoices = new ArrayList<>();
-    public static List<String> whichSpeedrunner = new ArrayList<>();
-    public static List<Location> locWorld = new ArrayList<>();
-    public static List<Location> locNether = new ArrayList<>();
-    public static List<Location> locTheEnd = new ArrayList<>();
-    public static List<Boolean> hOps = new ArrayList<>();
-    public static List<Boolean> sOps = new ArrayList<>();
+    public static List<String> hunters = new LinkedList<>();
+    public static List<String> speedrunners = new LinkedList<>();
+    public static List<String> CompassChoices = new LinkedList<>();
+    public static List<String> whichSpeedrunner = new LinkedList<>();
+    public static List<Location> locWorld = new LinkedList<>();
+    public static List<Location> locNether = new LinkedList<>();
+    public static List<Location> locTheEnd = new LinkedList<>();
+    public static List<Boolean> hOps = new LinkedList<>();
+    public static List<Boolean> sOps = new LinkedList<>();
     public static int seconds = 11;
     public static boolean inGame = false;
-    private static BukkitTask gameStarted;
     private static BukkitTask starting;
     public static BukkitTask game;
     BukkitTask pausing;
     BukkitTask unpausing;
-    public static ItemStack kompas = new ItemStack(Material.COMPASS, 1);
+    public static ItemStack compass;
     private double finalDistance, distance;
     private Player hunter, speedrunner, target;
-    public static int pause = 0;
-    public static int unpause = 0;
-    public static List<String> pausePlayers = new ArrayList<>();
-    public static List<String> unpausePlayers = new ArrayList<>();
+    public static int pause;
+    public static int unpause;
+    public static List<String> pausePlayers = new LinkedList<>();
+    public static List<String> unpausePlayers = new LinkedList<>();
 
 /*
 §0 - black
@@ -142,6 +141,10 @@ public class ManhuntCommand implements CommandExecutor {
                 return true;
             }
             Player target = Bukkit.getPlayerExact(args[1]);
+            if(target == null) {
+                p.sendMessage(ChatColor.RED + "This player does not exist or is offline");
+                return true;
+            }
             if(speedrunners.contains(target.getName())) {
                 speedrunners.remove(target.getName());
                 p.sendMessage(ChatColor.AQUA + "Successfully removed " + target.getName() + " from speedrunners");
@@ -175,12 +178,13 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.YELLOW + "The game has already started!");
                 return true;
             }
-            for(int i = 0; i < speedrunners.size(); i++) {
-                Location loc = Bukkit.getPlayerExact(speedrunners.get(i)).getLocation();
+            for (String runner : speedrunners) {
+                Location loc = Bukkit.getPlayerExact(runner).getLocation();
                 locWorld.add(loc);
                 locNether.add(null);
                 locTheEnd.add(null);
             }
+            pause = 0;
             unpause = hunters.size() + speedrunners.size();
             ItemStack item = new ItemStack(Material.COMPASS,1);
             ItemMeta meta = item.getItemMeta();
@@ -189,153 +193,157 @@ public class ManhuntCommand implements CommandExecutor {
             lore.add(ChatColor.BLUE + "This compass is to track speedrunners!");
             meta.setLore(lore);
             item.setItemMeta(meta);
-            kompas = item;
+            compass = item;
             Player tar;
-            for(int i = 0; i < hunters.size(); i++) {
-                tar = Bukkit.getPlayerExact(hunters.get(i));
-                tar.getInventory().clear();
-                tar.getInventory().addItem(kompas);
-                tar.setGameMode(GameMode.SURVIVAL);
-                if(tar.isOp()) {
-                    hOps.add(true);
-                } else {
-                    hOps.add(false);
+            for (String value : hunters) {
+                tar = Bukkit.getPlayerExact(value);
+                if (tar != null) {
+                    tar.getInventory().clear();
+                    tar.getInventory().addItem(compass);
+                    tar.setGameMode(GameMode.SURVIVAL);
+                    if (tar.isOp()) {
+                        hOps.add(true);
+                    } else {
+                        hOps.add(false);
+                    }
+                    tar.setOp(false);
+                    CompassChoices.add("0");
+                    whichSpeedrunner.add(speedrunners.get(0));
+                    tar.setHealth(20);
+                    tar.setFoodLevel(20);
+                    tar.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                    Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
+                    while (advancements.hasNext()) {
+                        AdvancementProgress progress = tar.getAdvancementProgress(advancements.next());
+                        for (String s : progress.getAwardedCriteria())
+                            progress.revokeCriteria(s);
+                    }
                 }
-                tar.setOp(false);
-                CompassChoices.add("0");
-                whichSpeedrunner.add(speedrunners.get(0));
-                tar.setHealth(20);
-                tar.setFoodLevel(20);
-                tar.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
-                Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
-                while (advancements.hasNext()) {
-                    AdvancementProgress progress = tar.getAdvancementProgress(advancements.next());
-                    for (String s : progress.getAwardedCriteria())
-                        progress.revokeCriteria(s);
-                }
-
             }
-            for(int i = 0; i < speedrunners.size(); i++) {
-                Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-                player.setGameMode(GameMode.SURVIVAL);
-                if(player.isOp()) {
-                    sOps.add(true);
-                } else {
-                    sOps.add(false);
-                }
-                player.setOp(false);
-                player.setHealth(20);
-                player.setFoodLevel(20);
-                player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
-                player.getInventory().clear();
-                Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
-                while (advancements.hasNext()) {
-                    AdvancementProgress progress = player.getAdvancementProgress(advancements.next());
-                    for (String s : progress.getAwardedCriteria())
-                        progress.revokeCriteria(s);
+            for (String value : speedrunners) {
+                Player player = Bukkit.getPlayerExact(value);
+                if (player != null) {
+                    player.setGameMode(GameMode.SURVIVAL);
+                    if (player.isOp()) {
+                        sOps.add(true);
+                    } else {
+                        sOps.add(false);
+                    }
+                    player.setOp(false);
+                    player.setHealth(20);
+                    player.setFoodLevel(20);
+                    player.getInventory().clear();
+                    Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
+                    while (advancements.hasNext()) {
+                        AdvancementProgress progress = player.getAdvancementProgress(advancements.next());
+                        for (String s : progress.getAwardedCriteria())
+                            progress.revokeCriteria(s);
+                    }
                 }
             }
             inGame = true;
             starting = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if(!inGame) {
+                    seconds -= 1;
+                    if(!inGame || seconds == 0) {
                         this.cancel();
                     }
-                    seconds -= 1;
                     playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " seconds remaining!");
-                    for(int i = 0; i < hunters.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(hunters.get(i));
-                        player.setLevel(seconds);
-                        player.setExp((float) seconds/10);
-                        player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
+                    for (String s : hunters) {
+                        Player player = Bukkit.getPlayerExact(s);
+                        if(player != null) {
+                            player.setLevel(seconds);
+                            player.setExp((float) seconds / 10);
+                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
+                        }
                     }
-                    for(int i = 0; i < speedrunners.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-                        player.setLevel(seconds);
-                        player.setExp((float) seconds/10);
-                        player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
+                    for (String s : speedrunners) {
+                        Player player = Bukkit.getPlayerExact(s);
+                        if(player != null) {
+                            player.setLevel(seconds);
+                            player.setExp((float) seconds / 10);
+                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
+                        }
                     }
                 }
-            }.runTaskTimerAsynchronously(main, 0, 20);
-            gameStarted = new BukkitRunnable() {
+            }.runTaskTimer(main, 0, 20);
+            for (String s : hunters) {
+                Player player = Bukkit.getPlayerExact(s);
+                if(player != null) {
+                    player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                    player.setLevel(0);
+                    player.setExp((float) 0);
+                }
+            }
+            for (String s : speedrunners) {
+                Player player = Bukkit.getPlayerExact(s);
+                if(player != null) {
+                    player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                    player.setLevel(0);
+                    player.setExp((float) 0);
+                }
+            }
+            playersMessage(ChatColor.AQUA + "START!");
+            seconds = 11;
+            game = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    for(int i = 0; i < hunters.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(hunters.get(i));
-                        player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                        player.setLevel(0);
-                        player.setExp((float) 0);
-                    }
                     for(int i = 0; i < speedrunners.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-                        player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                        player.setLevel(0);
-                        player.setExp((float) 0);
-                    }
-                    playersMessage(ChatColor.AQUA + "START!");
-                    starting.cancel();
-                    seconds = 11;
-                    game = new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            for(int i = 0; i < speedrunners.size(); i++) {
-                                speedrunner = Bukkit.getPlayerExact(speedrunners.get(i));
-                                if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
-                                    locNether.set(i, speedrunner.getLocation());
-                                } else if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
-                                    locWorld.set(i, speedrunner.getLocation());
-                                } else if(speedrunner.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
-                                    locTheEnd.set(i, speedrunner.getLocation());
-                                }
-                            }
-                            for(int i = 0; i < hunters.size(); i++) {
-                                hunter = Bukkit.getPlayerExact(hunters.get(i));
-                                if(CompassChoices.get(i).equals("0")) {
-                                    target = null;
-                                    finalDistance = Double.MAX_VALUE;
-                                    for(int n = 0; n < speedrunners.size(); n++) {
-                                        speedrunner = Bukkit.getPlayerExact(speedrunners.get(i));
-                                        if(hunter.getWorld().getEnvironment().equals(speedrunner.getWorld().getEnvironment())) {
-                                            distance = getDistance(hunter.getLocation(), speedrunner.getLocation());
-                                            if(distance < finalDistance) {
-                                                finalDistance = distance;
-                                                target = speedrunner;
-                                            }
-                                        }
-                                    }
-                                    if(target == null) {
-                                        ItemMeta meta = kompas.getItemMeta();
-                                        meta.setDisplayName(ChatColor.RED + "There is no speedrunner is this dimension!");
-                                        hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(meta);
-                                    } else {
-                                        CompassMeta cmeta = (CompassMeta) kompas.getItemMeta();
-                                        cmeta.setLodestone(target.getLocation());
-                                        cmeta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + "nearest speedunner");
-                                        hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(cmeta);
-                                    }
-                                } else if(CompassChoices.get(i).equals("1")) {
-                                    CompassMeta cmeta = (CompassMeta) kompas.getItemMeta();
-                                    target = Bukkit.getPlayerExact(whichSpeedrunner.get(i));
-                                    if(hunter.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
-                                        cmeta.setLodestone(locWorld.get(speedrunners.indexOf(target.getName())));
-                                    } else if(hunter.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
-                                        cmeta.setLodestone(locNether.get(speedrunners.indexOf(target.getName())));
-                                    } else if(hunter.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
-                                        cmeta.setLodestone(locTheEnd.get(speedrunners.indexOf(target.getName())));
-                                    }
-                                    if(!(target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment()))) {
-                                        cmeta.setDisplayName(ChatColor.RED + target.getName() + " is not in this dimension!");
-                                    } else {
-                                        cmeta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
-                                    }
-                                    hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(cmeta);
-                                }
-                            }
+                        speedrunner = Bukkit.getPlayerExact(speedrunners.get(i));
+                        if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
+                            locNether.set(i, speedrunner.getLocation());
+                        } else if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+                            locWorld.set(i, speedrunner.getLocation());
+                        } else if(speedrunner.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
+                            locTheEnd.set(i, speedrunner.getLocation());
                         }
-                    }.runTaskTimerAsynchronously(main, 0, 1);
+                    }
+                    for(int i = 0; i < hunters.size(); i++) {
+                        hunter = Bukkit.getPlayerExact(hunters.get(i));
+                        if(CompassChoices.get(i).equals("0")) {
+                            target = null;
+                            finalDistance = Double.MAX_VALUE;
+                            for (String s : speedrunners) {
+                                speedrunner = Bukkit.getPlayerExact(s);
+                                if (hunter.getWorld().getEnvironment().equals(speedrunner.getWorld().getEnvironment())) {
+                                    distance = getDistance(hunter.getLocation(), speedrunner.getLocation());
+                                    if (distance < finalDistance) {
+                                        finalDistance = distance;
+                                        target = speedrunner;
+                                    }
+                                }
+                            }
+                            if(target == null) {
+                                ItemMeta meta = compass.getItemMeta();
+                                meta.setDisplayName(ChatColor.RED + "There is no speedrunner is this dimension!");
+                                hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(meta);
+                            } else {
+                                CompassMeta meta = (CompassMeta) compass.getItemMeta();
+                                meta.setLodestone(target.getLocation());
+                                meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + "nearest speedrunner");
+                                hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(meta);
+                            }
+                        } else {
+                            CompassMeta meta = (CompassMeta) compass.getItemMeta();
+                            target = Bukkit.getPlayerExact(whichSpeedrunner.get(i));
+                            if(hunter.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+                                meta.setLodestone(locWorld.get(speedrunners.indexOf(target.getName())));
+                            } else if(hunter.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
+                                meta.setLodestone(locNether.get(speedrunners.indexOf(target.getName())));
+                            } else if(hunter.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
+                                meta.setLodestone(locTheEnd.get(speedrunners.indexOf(target.getName())));
+                            }
+                            if(!(target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment()))) {
+                                meta.setDisplayName(ChatColor.RED + target.getName() + " is not in this dimension!");
+                            } else {
+                                meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
+                            }
+                            hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(meta);
+                        }
+                    }
                 }
-            }.runTaskLater(main, 200);
+            }.runTaskTimer(main, 0, 1);
             return true;
         }
         if (args[0].equals("reset")) {
@@ -343,7 +351,7 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
-            p.sendMessage(ChatColor.AQUA + "Manhunt game has been reseted!");
+            p.sendMessage(ChatColor.AQUA + "Manhunt game has been reset!");
             reset();
             return true;
         }
@@ -364,26 +372,28 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Game is already paused!");
                 return true;
             }
-            if(pause < hunters.size() + speedrunners.size()) {
-                if(pausePlayers.contains(p.getName())) {
-                    p.sendMessage(ChatColor.RED + "You have already voted to pause the game!");
-                    return true;
-                }
-                pause +=1;
-                playersMessage(ChatColor.AQUA + p.getName() + " wants to pause the game! (" + pause + "/" + (hunters.size() + speedrunners.size()) + ")");
-                pausePlayers.add(p.getName());
+            if(pausePlayers.contains(p.getName())) {
+                p.sendMessage(ChatColor.RED + "You have already voted to pause the game!");
+                return true;
             }
+            pause +=1;
+            playersMessage(ChatColor.AQUA + p.getName() + " wants to pause the game! (" + pause + "/" + (hunters.size() + speedrunners.size()) + ")");
+            pausePlayers.add(p.getName());
             if(pause == hunters.size() + speedrunners.size()) {
                 pausing.cancel();
                 unpause = 0;
                 unpausePlayers.clear();
-                for(int i = 0; i < hunters.size(); i++) {
-                    Player player = Bukkit.getPlayerExact(hunters.get(i));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200000, 255));
+                for (String s : hunters) {
+                    Player player = Bukkit.getPlayerExact(s);
+                    if(player != null) {
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200000, 255));
+                    }
                 }
-                for(int i = 0; i < speedrunners.size(); i++) {
-                    Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200000, 255));
+                for (String s : speedrunners) {
+                    Player player = Bukkit.getPlayerExact(s);
+                    if(player != null) {
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200000, 255));
+                    }
                 }
                 playersMessage(ChatColor.AQUA + "Game paused!");
                 return true;
@@ -417,29 +427,31 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Game is not paused!");
                 return true;
             }
-            if (unpause < hunters.size() + speedrunners.size()) {
-                if (unpausePlayers.contains(p.getName())) {
-                    p.sendMessage(ChatColor.RED + "You have already voted to unpause the game!");
-                    return true;
-                }
-                unpause += 1;
-                playersMessage(ChatColor.AQUA + p.getName() + " wants to unpause the game! (" + unpause + "/" + (hunters.size() + speedrunners.size()) + ")");
-                unpausePlayers.add(p.getName());
+            if (unpausePlayers.contains(p.getName())) {
+                p.sendMessage(ChatColor.RED + "You have already voted to unpause the game!");
+                return true;
             }
+            unpause += 1;
+            playersMessage(ChatColor.AQUA + p.getName() + " wants to unpause the game! (" + unpause + "/" + (hunters.size() + speedrunners.size()) + ")");
+            unpausePlayers.add(p.getName());
             if (unpause == hunters.size() + speedrunners.size()) {
                 unpausing.cancel();
                 pause = 0;
                 pausePlayers.clear();
                 playersMessage(ChatColor.AQUA + "Game unpaused!");
-                for (int i = 0; i < hunters.size(); i++) {
-                    Player player = Bukkit.getPlayerExact(hunters.get(i));
-                    player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                for (String s : hunters) {
+                    Player player = Bukkit.getPlayerExact(s);
+                    if(player != null) {
+                        player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                    }
                 }
-                for (int i = 0; i < speedrunners.size(); i++) {
-                    Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-                    player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                for (String s : speedrunners) {
+                    Player player = Bukkit.getPlayerExact(s);
+                    if(player != null) {
+                        player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                    }
                 }
                 return true;
             }
@@ -468,14 +480,14 @@ public class ManhuntCommand implements CommandExecutor {
             if(speedrunners.size() > 0) {
                 p.sendMessage(ChatColor.GOLD + "Speedrunners:");
             }
-            for(int i = 0; i < speedrunners.size(); i++) {
-                p.sendMessage(ChatColor.AQUA + speedrunners.get(i));
+            for (String s : speedrunners) {
+                p.sendMessage(ChatColor.AQUA + s);
             }
             if(hunters.size() > 0) {
                 p.sendMessage(ChatColor.GOLD + "Hunters:");
             }
-            for(int i = 0; i < hunters.size(); i++) {
-                p.sendMessage(ChatColor.AQUA + hunters.get(i));
+            for (String s : hunters) {
+                p.sendMessage(ChatColor.AQUA + s);
             }
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
             return true;
@@ -484,36 +496,33 @@ public class ManhuntCommand implements CommandExecutor {
         return true;
     }
     public static void reset() {
-        for(int i = 0; i < hunters.size(); i++) {
-            Player player = Bukkit.getPlayerExact(hunters.get(i));
-            player.getInventory().clear(compassSlot(player));
+        for (String s : hunters) {
+            Player player = Bukkit.getPlayerExact(s);
+            if(player != null) {
+                player.getInventory().clear(compassSlot(player));
+            }
         }
         if(inGame) {
             if(seconds != 11) {
                 starting.cancel();
-                gameStarted.cancel();
             } else {
                 game.cancel();
             }
-        }
-        pause = 0;
-        unpause = 0;
-        pausePlayers.clear();
-        unpausePlayers.clear();
-        if(inGame) {
             for(int i = 0; i < hunters.size(); i++) {
                 Player tar = Bukkit.getPlayerExact(hunters.get(i));
-                if(hOps.get(i)) {
-                    tar.setOp(true);
+                if(tar != null) {
+                    tar.setOp(hOps.get(i));
                 }
             }
             for(int i = 0; i < speedrunners.size(); i++) {
                 Player tar = Bukkit.getPlayerExact(speedrunners.get(i));
-                if(sOps.get(i)) {
-                    tar.setOp(true);
+                if(tar != null) {
+                    tar.setOp(sOps.get(i));
                 }
             }
         }
+        pausePlayers.clear();
+        unpausePlayers.clear();
         hOps.clear();
         sOps.clear();
         hunters.clear();
@@ -551,13 +560,17 @@ public class ManhuntCommand implements CommandExecutor {
         return 50;
     }
     public static void playersMessage(String s) {
-        for(int i = 0; i < hunters.size(); i++) {
-            Player player = Bukkit.getPlayerExact(hunters.get(i));
-            player.sendMessage(s);
+        for (String value : hunters) {
+            Player player = Bukkit.getPlayerExact(value);
+            if(player != null) {
+                player.sendMessage(s);
+            }
         }
-        for(int i = 0; i < speedrunners.size(); i++) {
-            Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-            player.sendMessage(s);
+        for (String value : speedrunners) {
+            Player player = Bukkit.getPlayerExact(value);
+            if(player != null) {
+                player.sendMessage(s);
+            }
         }
     }
 }

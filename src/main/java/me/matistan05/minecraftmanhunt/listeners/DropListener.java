@@ -9,9 +9,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 public class DropListener implements Listener {
-    private final Main main;
     public DropListener(Main main) {
-        this.main = main;
 
         Bukkit.getPluginManager().registerEvents(this, main);
     }

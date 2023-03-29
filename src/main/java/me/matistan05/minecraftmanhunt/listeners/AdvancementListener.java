@@ -11,9 +11,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent;
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class AdvancementListener implements Listener {
-    private final Main main;
     public AdvancementListener(Main main) {
-        this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
 

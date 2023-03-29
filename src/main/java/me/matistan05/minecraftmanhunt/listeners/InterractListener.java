@@ -13,9 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class InterractListener implements Listener {
-    private final Main main;
     public InterractListener(Main main) {
-        this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
     @EventHandler
