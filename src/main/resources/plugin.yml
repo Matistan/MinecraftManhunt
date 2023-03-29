@@ -1,0 +1,4 @@
+name: MinecraftManhunt
+version: 1.0
+main: me.matistan05.minecraftmanhunt.Main
+api-version: 1.16
