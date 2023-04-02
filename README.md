@@ -3,7 +3,8 @@
 ---
 
 Made with [Spigot](https://www.spigotmc.org/)/[Bukkit](https://dev.bukkit.org/)<br>
-Inspired by [Dream](https://www.youtube.com/@dream)
+Inspired by [Dream](https://www.youtube.com/@dream)<br>
+Download [here](https://github.com/Matistan/MinecraftManhunt/releases)
 
 ---
 
