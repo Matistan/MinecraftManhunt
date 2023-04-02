@@ -29,22 +29,27 @@ public class DeathListener implements Listener {
             }
         } else if(speedrunners.contains(p.getName())) {
             Player tar = Bukkit.getPlayerExact(p.getName());
-            tar.setOp(sOps.get(speedrunners.indexOf(p.getName())));
-            sOps.remove(speedrunners.indexOf(p.getName()));
-            if(speedrunners.size() == 1) {
-                playersMessage(ChatColor.DARK_RED + "Last speedrunner " + p.getName() + " died!");
-                playersMessage(ChatColor.DARK_RED + "Hunters won!");
-                for (String hunter : hunters) {
-                    Player player = Bukkit.getPlayerExact(hunter);
-                    if(player != null) {
-                        player.getInventory().clear(compassSlot(p));
+            lives.set(speedrunners.indexOf(p.getName()), lives.get(speedrunners.indexOf(p.getName())) - 1);
+            if(lives.get(speedrunners.indexOf(p.getName())) >= 1) {
+                playersMessage(ChatColor.DARK_RED + "Speedrunner " + p.getName() + " died and has " + lives.get(speedrunners.indexOf(p.getName())) + "live" + (lives.get(speedrunners.indexOf(p.getName())) == 1 ? "" : "s") + " left!");
+            } else {
+                tar.setOp(sOps.get(speedrunners.indexOf(p.getName())));
+                sOps.remove(speedrunners.indexOf(p.getName()));
+                if(speedrunners.size() == 1) {
+                    playersMessage(ChatColor.DARK_RED + "Last speedrunner " + p.getName() + " died!");
+                    playersMessage(ChatColor.DARK_RED + "Hunters won!");
+                    for (String hunter : hunters) {
+                        Player player = Bukkit.getPlayerExact(hunter);
+                        if(player != null) {
+                            player.getInventory().clear(compassSlot(p));
+                        }
                     }
+                    reset();
                 }
-                reset();
+                speedrunners.remove(p.getName());
+                playersMessage(ChatColor.DARK_RED + "Speedrunner " + p.getName() + " died!");
+                playersMessage(ChatColor.DARK_RED + "There are " + speedrunners.size() + " speedrunner" + (speedrunners.size() == 1 ? "" : "s") + " left alive!");
             }
-            speedrunners.remove(p.getName());
-            playersMessage(ChatColor.DARK_RED + "Speedrunner " + p.getName() + " died!");
-            playersMessage(ChatColor.DARK_RED + "There are " + speedrunners.size() + " speedrunner" + (speedrunners.size() == 1 ? "" : "s") + " left alive!");
         }
     }
 }

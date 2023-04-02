@@ -19,17 +19,18 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 
 public class ManhuntCommand implements CommandExecutor {
-    private final Main main;
+    private static Main main;
     public static List<String> hunters = new LinkedList<>();
     public static List<String> speedrunners = new LinkedList<>();
-    public static List<String> CompassChoices = new LinkedList<>();
+    public static List<String> compassMode = new LinkedList<>();
     public static List<String> whichSpeedrunner = new LinkedList<>();
     public static List<Location> locWorld = new LinkedList<>();
     public static List<Location> locNether = new LinkedList<>();
     public static List<Location> locTheEnd = new LinkedList<>();
     public static List<Boolean> hOps = new LinkedList<>();
     public static List<Boolean> sOps = new LinkedList<>();
-    public static int seconds = 11;
+    public static List<Integer> lives = new LinkedList<>();
+    public static int seconds;
     public static boolean inGame = false;
     private static BukkitTask starting;
     public static BukkitTask game;
@@ -57,7 +58,7 @@ public class ManhuntCommand implements CommandExecutor {
  */
 
     public ManhuntCommand(Main main) {
-        this.main = main;
+        ManhuntCommand.main = main;
     }
 
     @Override
@@ -178,12 +179,13 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.YELLOW + "The game has already started!");
                 return true;
             }
-            for (String runner : speedrunners) {
-                Location loc = Bukkit.getPlayerExact(runner).getLocation();
-                locWorld.add(loc);
-                locNether.add(null);
-                locTheEnd.add(null);
+            if(main.getConfig().getBoolean("timeSetDayOnStart")) {
+                p.getWorld().setTime(0);
             }
+            if(main.getConfig().getBoolean("weatherClearOnStart")) {
+                p.getWorld().setStorm(false);
+            }
+            seconds = main.getConfig().getInt("headStartDuration");
             pause = 0;
             unpause = hunters.size() + speedrunners.size();
             ItemStack item = new ItemStack(Material.COMPASS,1);
@@ -201,13 +203,14 @@ public class ManhuntCommand implements CommandExecutor {
                     tar.getInventory().clear();
                     tar.getInventory().addItem(compass);
                     tar.setGameMode(GameMode.SURVIVAL);
-                    if (tar.isOp()) {
-                        hOps.add(true);
-                    } else {
-                        hOps.add(false);
+                    if(main.getConfig().getBoolean("takeAwayOps")) {
+                        hOps.add(tar.isOp());
+                        tar.setOp(false);
                     }
-                    tar.setOp(false);
-                    CompassChoices.add("0");
+                    if(main.getConfig().getBoolean("clearInventories")) {
+                        tar.getInventory().clear();
+                    }
+                    compassMode.add("1");
                     whichSpeedrunner.add(speedrunners.get(0));
                     tar.setHealth(20);
                     tar.setFoodLevel(20);
@@ -223,13 +226,19 @@ public class ManhuntCommand implements CommandExecutor {
             for (String value : speedrunners) {
                 Player player = Bukkit.getPlayerExact(value);
                 if (player != null) {
+                    Location loc = player.getLocation();
+                    locWorld.add(loc);
+                    locNether.add(null);
+                    locTheEnd.add(null);
+                    lives.add(main.getConfig().getInt("speedrunnersLives"));
                     player.setGameMode(GameMode.SURVIVAL);
-                    if (player.isOp()) {
-                        sOps.add(true);
-                    } else {
-                        sOps.add(false);
+                    if(main.getConfig().getBoolean("takeAwayOps")) {
+                        hOps.add(player.isOp());
+                        player.setOp(false);
                     }
-                    player.setOp(false);
+                    if(main.getConfig().getBoolean("clearInventories")) {
+                        player.getInventory().clear();
+                    }
                     player.setHealth(20);
                     player.setFoodLevel(20);
                     player.getInventory().clear();
@@ -246,23 +255,19 @@ public class ManhuntCommand implements CommandExecutor {
                 @Override
                 public void run() {
                     seconds -= 1;
-                    if(!inGame || seconds == 0) {
+                    if(!inGame || seconds == -1) {
                         this.cancel();
                     }
-                    playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " seconds remaining!");
+                    playersMessage(ChatColor.BLUE + String.valueOf(seconds + 1) + " second" + (seconds == 0 ? "" : "s") +" remaining!");
                     for (String s : hunters) {
                         Player player = Bukkit.getPlayerExact(s);
                         if(player != null) {
-                            player.setLevel(seconds);
-                            player.setExp((float) seconds / 10);
                             player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
                         }
                     }
                     for (String s : speedrunners) {
                         Player player = Bukkit.getPlayerExact(s);
                         if(player != null) {
-                            player.setLevel(seconds);
-                            player.setExp((float) seconds / 10);
                             player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
                         }
                     }
@@ -272,20 +277,16 @@ public class ManhuntCommand implements CommandExecutor {
                 Player player = Bukkit.getPlayerExact(s);
                 if(player != null) {
                     player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                    player.setLevel(0);
-                    player.setExp((float) 0);
                 }
             }
             for (String s : speedrunners) {
                 Player player = Bukkit.getPlayerExact(s);
                 if(player != null) {
                     player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                    player.setLevel(0);
-                    player.setExp((float) 0);
                 }
             }
             playersMessage(ChatColor.AQUA + "START!");
-            seconds = 11;
+            seconds = main.getConfig().getInt("headStartDuration");
             game = new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -301,7 +302,7 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     for(int i = 0; i < hunters.size(); i++) {
                         hunter = Bukkit.getPlayerExact(hunters.get(i));
-                        if(CompassChoices.get(i).equals("0")) {
+                        if(compassMode.get(i).equals("0")) {
                             target = null;
                             finalDistance = Double.MAX_VALUE;
                             for (String s : speedrunners) {
@@ -327,17 +328,23 @@ public class ManhuntCommand implements CommandExecutor {
                         } else {
                             CompassMeta meta = (CompassMeta) compass.getItemMeta();
                             target = Bukkit.getPlayerExact(whichSpeedrunner.get(i));
-                            if(hunter.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
-                                meta.setLodestone(locWorld.get(speedrunners.indexOf(target.getName())));
-                            } else if(hunter.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
-                                meta.setLodestone(locNether.get(speedrunners.indexOf(target.getName())));
-                            } else if(hunter.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
-                                meta.setLodestone(locTheEnd.get(speedrunners.indexOf(target.getName())));
-                            }
-                            if(!(target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment()))) {
-                                meta.setDisplayName(ChatColor.RED + target.getName() + " is not in this dimension!");
+                            if(target == null) {
+                                meta.setDisplayName(ChatColor.RED + whichSpeedrunner.get(i) + " is not online!");
                             } else {
-                                meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
+                                if(!target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment())) {
+                                    meta.setDisplayName(ChatColor.RED + target.getName() + " is not in this dimension!");
+                                } else {
+                                    meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
+                                }
+                                if(target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment()) && main.getConfig().getBoolean("trackPortals")) {
+                                    if(hunter.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+                                        meta.setLodestone(locWorld.get(speedrunners.indexOf(target.getName())));
+                                    } else if(hunter.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
+                                        meta.setLodestone(locNether.get(speedrunners.indexOf(target.getName())));
+                                    } else if(hunter.getWorld().getEnvironment().equals(World.Environment.THE_END)) {
+                                        meta.setLodestone(locTheEnd.get(speedrunners.indexOf(target.getName())));
+                                    }
+                                }
                             }
                             hunter.getInventory().getItem(compassSlot(hunter)).setItemMeta(meta);
                         }
@@ -503,21 +510,23 @@ public class ManhuntCommand implements CommandExecutor {
             }
         }
         if(inGame) {
-            if(seconds != 11) {
+            if(seconds != main.getConfig().getInt("headStartDuration")) {
                 starting.cancel();
             } else {
                 game.cancel();
             }
-            for(int i = 0; i < hunters.size(); i++) {
-                Player tar = Bukkit.getPlayerExact(hunters.get(i));
-                if(tar != null) {
-                    tar.setOp(hOps.get(i));
+            if(main.getConfig().getBoolean("takeAwayOps")) {
+                for(int i = 0; i < hunters.size(); i++) {
+                    Player tar = Bukkit.getPlayerExact(hunters.get(i));
+                    if(tar != null) {
+                        tar.setOp(hOps.get(i));
+                    }
                 }
-            }
-            for(int i = 0; i < speedrunners.size(); i++) {
-                Player tar = Bukkit.getPlayerExact(speedrunners.get(i));
-                if(tar != null) {
-                    tar.setOp(sOps.get(i));
+                for(int i = 0; i < speedrunners.size(); i++) {
+                    Player tar = Bukkit.getPlayerExact(speedrunners.get(i));
+                    if(tar != null) {
+                        tar.setOp(sOps.get(i));
+                    }
                 }
             }
         }
@@ -527,13 +536,13 @@ public class ManhuntCommand implements CommandExecutor {
         sOps.clear();
         hunters.clear();
         speedrunners.clear();
-        CompassChoices.clear();
+        compassMode.clear();
         whichSpeedrunner.clear();
         locWorld.clear();
         locNether.clear();
         locTheEnd.clear();
+        lives.clear();
         inGame = false;
-        seconds = 11;
     }
     private double getDistance(Location from, Location to) {
         double fromX = from.getX();

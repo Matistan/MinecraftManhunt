@@ -9,6 +9,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         getServer().getPluginCommand("manhunt").setExecutor(new ManhuntCommand(this));
         getCommand("manhunt").setTabCompleter(new ManhuntCompleter());
         new DeathListener(this);

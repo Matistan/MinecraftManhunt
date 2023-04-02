@@ -1,0 +1,16 @@
+# Set to true to set the time to day automatically when the game starts.
+timeSetDayOnStart: true
+# Set to true to set the weather to clear automatically when the game starts.
+weatherClearOnStart: true
+# Set to true to take away OPs for the duration of the game.
+takeAwayOps: true
+# Set to true to clear players inventories when the game starts.
+clearInventories: true
+# Set the time for speedrunners to run away.
+headStartDuration: 10
+# Set the amount of lives for speedrunners.
+speedrunnersLives: 1
+# Set to true to enable tracking speedrunners portals when they are in a different dimension.
+trackPortals: true
+# Set to true to enable tracking the nearest speedrunner on compasses.
+trackNearestMode: true

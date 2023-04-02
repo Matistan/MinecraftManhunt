@@ -47,6 +47,21 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - `/manhunt list` - shows a list of players in a manhunt game with their roles
 - `/manhunt help` - shows a list of manhunt commands
 
+## Configuration Options
+
+Edit the `plugins/MinecraftManhunt/config.yml` file to change the following options:
+
+Key|Description|Type|recommended
+--|--|--|--
+timeSetDayOnStart | Set to true to set the time to day automatically when the game starts. | boolean | true
+weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts. | boolean | true
+takeAwayOps | Set to true to take away OPs for the duration of the game. | boolean | true
+clearInventories | Set to true to clear players inventories when the game starts. | boolean | true
+headStartDuration | Set the time for speedrunners to run away. | int | 10
+speedrunnersLives | Set the amount of lives for speedrunners. | int | 1
+trackPortals | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true
+trackNearestMode | Set to true to enable tracking the nearest speedrunner on compasses. | boolean | true
+
 ### Bugs & Issues
 
 > **Having issues?** Feel free to report them on the [Issues tab](https://github.com/Matistan/MinecraftManhunt/issues). I'll be glad to hear your opinion about the plugin as well as extra features you would like me to add!
