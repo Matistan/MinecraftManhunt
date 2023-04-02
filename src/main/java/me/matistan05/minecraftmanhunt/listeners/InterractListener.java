@@ -17,7 +17,7 @@ public class InterractListener implements Listener {
         Bukkit.getPluginManager().registerEvents(this, main);
     }
     @EventHandler
-    public void InterractEvent(PlayerInteractEvent e) {
+    public void InteractEvent(PlayerInteractEvent e) {
         if(!inGame || seconds != 11){return;}
         Player p = e.getPlayer();
         if(!hunters.contains(p.getName())) {return;}
