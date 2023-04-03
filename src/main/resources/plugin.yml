@@ -2,3 +2,9 @@ name: MinecraftManhunt
 version: 1.1
 main: me.matistan05.minecraftmanhunt.Main
 api-version: 1.16
+authors: [Matistan05]
+description: Minecraft manhunt plugin made by user Matistan05!
+commands:
+  manhunt:
+    description: This command sets up the whole manhunt game!
+    usage: /<command>
