@@ -43,7 +43,7 @@ public class ManhuntCommand implements CommandExecutor {
     public static int unpause;
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
-    //TODO option to teleport everyone in the same spot at start
+    public static Player tpPlayer;
 
 /*
 §0 - black
@@ -165,6 +165,10 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
+            if(!(hunters.contains(p.getName()) || speedrunners.contains(p.getName()))) {
+                p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
+                return true;
+            }
             if(speedrunners.size() + hunters.size() == 0) {
                 p.sendMessage(ChatColor.RED + "There are no hunters and speedrunners!");
                 return true;
@@ -198,6 +202,25 @@ public class ManhuntCommand implements CommandExecutor {
             item.setItemMeta(meta);
             compass = item;
             Player tar;
+            if(main.getConfig().getBoolean("teleport")) {
+                tpPlayer = null;
+                for(String speed : speedrunners) {
+                    Player pl = Bukkit.getPlayerExact(speed);
+                    if(pl != null) {
+                        tpPlayer = pl;
+                        break;
+                    }
+                }
+                if(tpPlayer == null) {
+                    for(String hun : hunters) {
+                        Player pl = Bukkit.getPlayerExact(hun);
+                        if(pl != null) {
+                            tpPlayer = pl;
+                            break;
+                        }
+                    }
+                }
+            }
             for (String value : hunters) {
                 tar = Bukkit.getPlayerExact(value);
                 if (tar != null) {
@@ -209,6 +232,9 @@ public class ManhuntCommand implements CommandExecutor {
                     if(main.getConfig().getBoolean("takeAwayOps")) {
                         hOps.add(tar.isOp());
                         tar.setOp(false);
+                    }
+                    if(main.getConfig().getBoolean("teleport")) {
+                        tar.teleport(tpPlayer);
                     }
                     whichSpeedrunner.add(speedrunners.get(0));
                     compassMode.add("1");
@@ -235,6 +261,9 @@ public class ManhuntCommand implements CommandExecutor {
                     if(main.getConfig().getBoolean("takeAwayOps")) {
                         sOps.add(player.isOp());
                         player.setOp(false);
+                    }
+                    if(main.getConfig().getBoolean("teleport")) {
+                        player.teleport(tpPlayer);
                     }
                     if(main.getConfig().getBoolean("clearInventories")) {
                         player.getInventory().clear();
