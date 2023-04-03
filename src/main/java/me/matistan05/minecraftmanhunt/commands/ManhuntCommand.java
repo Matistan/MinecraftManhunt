@@ -43,6 +43,7 @@ public class ManhuntCommand implements CommandExecutor {
     public static int unpause;
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
+    //TODO option to teleport everyone in the same spot at start
 
 /*
 §0 - black
@@ -200,21 +201,20 @@ public class ManhuntCommand implements CommandExecutor {
             for (String value : hunters) {
                 tar = Bukkit.getPlayerExact(value);
                 if (tar != null) {
-                    tar.getInventory().clear();
+                    if(main.getConfig().getBoolean("clearInventories")) {
+                        tar.getInventory().clear();
+                    }
                     tar.getInventory().addItem(compass);
                     tar.setGameMode(GameMode.SURVIVAL);
                     if(main.getConfig().getBoolean("takeAwayOps")) {
                         hOps.add(tar.isOp());
                         tar.setOp(false);
                     }
-                    if(main.getConfig().getBoolean("clearInventories")) {
-                        tar.getInventory().clear();
-                    }
-                    compassMode.add("1");
                     whichSpeedrunner.add(speedrunners.get(0));
+                    compassMode.add("1");
                     tar.setHealth(20);
                     tar.setFoodLevel(20);
-                    tar.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                    tar.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * seconds, 255));
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
                         AdvancementProgress progress = tar.getAdvancementProgress(advancements.next());
@@ -233,7 +233,7 @@ public class ManhuntCommand implements CommandExecutor {
                     lives.add(main.getConfig().getInt("speedrunnersLives"));
                     player.setGameMode(GameMode.SURVIVAL);
                     if(main.getConfig().getBoolean("takeAwayOps")) {
-                        hOps.add(player.isOp());
+                        sOps.add(player.isOp());
                         player.setOp(false);
                     }
                     if(main.getConfig().getBoolean("clearInventories")) {
@@ -241,7 +241,6 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     player.setHealth(20);
                     player.setFoodLevel(20);
-                    player.getInventory().clear();
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
                         AdvancementProgress progress = player.getAdvancementProgress(advancements.next());
@@ -262,34 +261,36 @@ public class ManhuntCommand implements CommandExecutor {
                     for (String s : hunters) {
                         Player player = Bukkit.getPlayerExact(s);
                         if(player != null) {
-                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
+                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds + 1), "", 0, 20, 10);
                         }
                     }
                     for (String s : speedrunners) {
                         Player player = Bukkit.getPlayerExact(s);
                         if(player != null) {
-                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
+                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds + 1), "", 0, 20, 10);
                         }
                     }
                 }
             }.runTaskTimer(main, 0, 20);
-            for (String s : hunters) {
-                Player player = Bukkit.getPlayerExact(s);
-                if(player != null) {
-                    player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                }
-            }
-            for (String s : speedrunners) {
-                Player player = Bukkit.getPlayerExact(s);
-                if(player != null) {
-                    player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                }
-            }
-            playersMessage(ChatColor.AQUA + "START!");
-            seconds = main.getConfig().getInt("headStartDuration");
             game = new BukkitRunnable() {
                 @Override
                 public void run() {
+                    if(inGame && seconds == -1) {
+                        for (String s : hunters) {
+                            Player player = Bukkit.getPlayerExact(s);
+                            if(player != null) {
+                                player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                            }
+                        }
+                        for (String s : speedrunners) {
+                            Player player = Bukkit.getPlayerExact(s);
+                            if(player != null) {
+                                player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                            }
+                        }
+                        playersMessage(ChatColor.AQUA + "START!");
+                        seconds = main.getConfig().getInt("headStartDuration");
+                    }
                     for(int i = 0; i < speedrunners.size(); i++) {
                         speedrunner = Bukkit.getPlayerExact(speedrunners.get(i));
                         if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
@@ -350,7 +351,7 @@ public class ManhuntCommand implements CommandExecutor {
                         }
                     }
                 }
-            }.runTaskTimer(main, 0, 1);
+            }.runTaskTimer(main, 20L * seconds, 1);
             return true;
         }
         if (args[0].equals("reset")) {
