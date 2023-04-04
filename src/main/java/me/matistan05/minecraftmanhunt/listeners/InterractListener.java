@@ -21,7 +21,7 @@ public class InterractListener implements Listener {
     @EventHandler
     public void InteractEvent(PlayerInteractEvent e) {
         if(main.getConfig().getBoolean("trackNearestMode")) {
-            if(!inGame || seconds != 11){return;}
+            if(!inGame || seconds != main.getConfig().getInt("headStartDuration")){return;}
             Player p = e.getPlayer();
             if(!hunters.contains(p.getName())) {return;}
             ItemStack item = e.getItem();
