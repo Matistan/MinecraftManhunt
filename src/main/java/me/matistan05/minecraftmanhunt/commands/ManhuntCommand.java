@@ -44,6 +44,7 @@ public class ManhuntCommand implements CommandExecutor {
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
     public static Player tpPlayer;
+    //TODO poddanie sie
 
 /*
 §0 - black
@@ -366,7 +367,7 @@ public class ManhuntCommand implements CommandExecutor {
                                 } else {
                                     meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
                                 }
-                                if(target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment()) && main.getConfig().getBoolean("trackPortals")) {
+                                if(main.getConfig().getBoolean("trackPortals")) {
                                     if(hunter.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
                                         meta.setLodestone(locWorld.get(speedrunners.indexOf(target.getName())));
                                     } else if(hunter.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
