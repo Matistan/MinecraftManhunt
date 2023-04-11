@@ -34,17 +34,13 @@ public class ManhuntCommand implements CommandExecutor {
     public static boolean inGame = false;
     private static BukkitTask starting;
     public static BukkitTask game;
-    BukkitTask pausing;
-    BukkitTask unpausing;
+    BukkitTask pausing, unpausing;
     public static ItemStack compass;
     private double finalDistance, distance;
     private Player hunter, speedrunner, target;
-    public static int pause;
-    public static int unpause;
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
     public static Player tpPlayer;
-    //TODO poddanie sie
 
 /*
 §0 - black
@@ -192,8 +188,6 @@ public class ManhuntCommand implements CommandExecutor {
                 p.getWorld().setStorm(false);
             }
             seconds = main.getConfig().getInt("headStartDuration");
-            pause = 0;
-            unpause = hunters.size() + speedrunners.size();
             ItemStack item = new ItemStack(Material.COMPASS,1);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + "nearest speedrunner");
@@ -241,6 +235,7 @@ public class ManhuntCommand implements CommandExecutor {
                     compassMode.add("1");
                     tar.setHealth(20);
                     tar.setFoodLevel(20);
+                    tar.setSaturation(20);
                     tar.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * seconds, 255));
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
@@ -271,6 +266,7 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     player.setHealth(20);
                     player.setFoodLevel(20);
+                    player.setSaturation(20);
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
                         AdvancementProgress progress = player.getAdvancementProgress(advancements.next());
@@ -406,7 +402,7 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
                 return true;
             }
-            if(pause == hunters.size() + speedrunners.size()) {
+            if(pausePlayers.size() == hunters.size() + speedrunners.size()) {
                 p.sendMessage(ChatColor.RED + "Game is already paused!");
                 return true;
             }
@@ -414,12 +410,10 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You have already voted to pause the game!");
                 return true;
             }
-            pause +=1;
-            playersMessage(ChatColor.AQUA + p.getName() + " wants to pause the game! (" + pause + "/" + (hunters.size() + speedrunners.size()) + ")");
             pausePlayers.add(p.getName());
-            if(pause == hunters.size() + speedrunners.size()) {
+            playersMessage(ChatColor.AQUA + p.getName() + " wants to pause the game! (" + pausePlayers.size() + "/" + (hunters.size() + speedrunners.size()) + ")");
+            if(pausePlayers.size() == hunters.size() + speedrunners.size()) {
                 pausing.cancel();
-                unpause = 0;
                 unpausePlayers.clear();
                 for (String s : hunters) {
                     Player player = Bukkit.getPlayerExact(s);
@@ -436,11 +430,10 @@ public class ManhuntCommand implements CommandExecutor {
                 playersMessage(ChatColor.AQUA + "Game paused!");
                 return true;
             }
-            if(pause == 1) {
+            if(pausePlayers.size() == 1) {
                 pausing = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        pause = 0;
                         pausePlayers.clear();
                         playersMessage(ChatColor.AQUA + "Voting for pause has expired");
                     }
@@ -461,7 +454,7 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
                 return true;
             }
-            if (unpause == hunters.size() + speedrunners.size()) {
+            if (unpausePlayers.size() == hunters.size() + speedrunners.size()) {
                 p.sendMessage(ChatColor.RED + "Game is not paused!");
                 return true;
             }
@@ -469,12 +462,10 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You have already voted to unpause the game!");
                 return true;
             }
-            unpause += 1;
-            playersMessage(ChatColor.AQUA + p.getName() + " wants to unpause the game! (" + unpause + "/" + (hunters.size() + speedrunners.size()) + ")");
             unpausePlayers.add(p.getName());
-            if (unpause == hunters.size() + speedrunners.size()) {
+            playersMessage(ChatColor.AQUA + p.getName() + " wants to unpause the game! (" + unpausePlayers.size() + "/" + (hunters.size() + speedrunners.size()) + ")");
+            if (unpausePlayers.size() == hunters.size() + speedrunners.size()) {
                 unpausing.cancel();
-                pause = 0;
                 pausePlayers.clear();
                 playersMessage(ChatColor.AQUA + "Game unpaused!");
                 for (String s : hunters) {
@@ -493,11 +484,10 @@ public class ManhuntCommand implements CommandExecutor {
                 }
                 return true;
             }
-            if(unpause == 1) {
+            if(unpausePlayers.size() == 1) {
                 unpausing = new BukkitRunnable() {
                     @Override
                     public void run() {
-                        unpause = 0;
                         unpausePlayers.clear();
                         playersMessage(ChatColor.AQUA + "Voting for unpause has expired");
                     }
