@@ -363,7 +363,7 @@ public class ManhuntCommand implements CommandExecutor {
                                 } else {
                                     meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
                                 }
-                                if(main.getConfig().getBoolean("trackPortals")) {
+                                if(main.getConfig().getBoolean("trackPortals") || target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment())) {
                                     if(hunter.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
                                         meta.setLodestone(locWorld.get(speedrunners.indexOf(target.getName())));
                                     } else if(hunter.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
