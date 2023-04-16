@@ -365,7 +365,7 @@ public class ManhuntCommand implements CommandExecutor {
                                 if(!target.getWorld().getEnvironment().equals(hunter.getWorld().getEnvironment())) {
                                     meta.setDisplayName(ChatColor.RED + target.getName() + " is not in this dimension!");
                                 } else if(target.isDead()){
-                                    meta.setDisplayName(ChatColor.RED + target.getName() + "is dead!");
+                                    meta.setDisplayName(ChatColor.RED + target.getName() + " is dead!");
                                 } else {
                                     meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + whichSpeedrunner.get(i));
                                 }
