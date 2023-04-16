@@ -62,6 +62,8 @@ headStartDuration | Set the time for speedrunners to run away. | int | 10
 speedrunnersLives | Set the amount of lives for speedrunners. | int | 1
 trackPortals | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true
 trackNearestMode | Set to true to enable tracking the nearest speedrunner on compasses. | boolean | true
+teleport | Set to true to teleport everyone in the same spot when the game starts. | boolean | true
+compassMenu | Set to true to open a menu to choose which speedrunner to track. | boolean | false; true if you're playing with a lot of speedrunners
 
 ### Bugs & Issues
 
