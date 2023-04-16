@@ -319,6 +319,7 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     for(int i = 0; i < speedrunners.size(); i++) {
                         speedrunner = Bukkit.getPlayerExact(speedrunners.get(i));
+                        if(speedrunner == null) {continue;}
                         if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NETHER)) {
                             locNether.set(i, speedrunner.getLocation());
                         } else if(speedrunner.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
@@ -329,11 +330,14 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     for(int i = 0; i < hunters.size(); i++) {
                         hunter = Bukkit.getPlayerExact(hunters.get(i));
+                        if(hunter == null) {continue;}
+                        if(compassSlot(hunter) == 50) {continue;}
                         if(compassMode.get(i).equals("0")) {
                             target = null;
                             finalDistance = Double.MAX_VALUE;
                             for (String s : speedrunners) {
                                 speedrunner = Bukkit.getPlayerExact(s);
+                                if(speedrunner == null) {continue;}
                                 if (hunter.getWorld().getEnvironment().equals(speedrunner.getWorld().getEnvironment())) {
                                     distance = getDistance(hunter.getLocation(), speedrunner.getLocation());
                                     if (distance < finalDistance) {

@@ -17,6 +17,7 @@ public class DropListener implements Listener {
     public void DropEvent(PlayerDropItemEvent e) {
         if(inGame) {
             if(hunters.contains(e.getPlayer().getName())) {
+                if(!e.getItemDrop().getItemStack().getItemMeta().hasLore()) {return;}
                 if(e.getItemDrop().getItemStack().getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!")) {
                     e.setCancelled(true);
                 }
