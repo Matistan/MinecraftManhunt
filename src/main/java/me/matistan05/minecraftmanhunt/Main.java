@@ -14,9 +14,10 @@ public final class Main extends JavaPlugin {
         getCommand("manhunt").setTabCompleter(new ManhuntCompleter());
         new DeathListener(this);
         new AdvancementListener(this);
-        new InterractListener(this);
+        new InteractListener(this);
         new RespawnListener(this);
         new DropListener(this);
         new MoveListener(this);
+        new MenuListener(this);
     }
 }
