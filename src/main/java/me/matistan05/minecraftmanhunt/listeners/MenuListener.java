@@ -30,6 +30,9 @@ public class MenuListener implements Listener {
                 }
             }
             e.setCancelled(true);
+            if(e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+                e.getWhoClicked().closeInventory();
+            }
         }
     }
 }
