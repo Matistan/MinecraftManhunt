@@ -41,17 +41,21 @@ public class InteractListener implements Listener {
             }
             if(a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) {
                 if(main.getConfig().getBoolean("compassMenu")) {
-                    Inventory compassInventory = Bukkit.createInventory(p, 54, ChatColor.RED + "Choose a speedrunner!");
-                    for(int i = 0; i < speedrunners.size(); i++) {
-                        Player player = Bukkit.getPlayerExact(speedrunners.get(i));
-                        if(player == null) {continue;}
-                        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
-                        SkullMeta headMeta = (SkullMeta) head.getItemMeta();
-                        headMeta.setOwningPlayer(player);
-                        head.setItemMeta(headMeta);
-                        compassInventory.setItem(i, head);
+                    if(compassMode.get(hunterIndex).equals("0")) {
+                        compassMode.set(hunterIndex, "1");
+                    } else {
+                        Inventory compassInventory = Bukkit.createInventory(p, 54, ChatColor.RED + "Choose a speedrunner!");
+                        for(int i = 0; i < speedrunners.size(); i++) {
+                            Player player = Bukkit.getPlayerExact(speedrunners.get(i));
+                            if(player == null) {continue;}
+                            ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
+                            SkullMeta headMeta = (SkullMeta) head.getItemMeta();
+                            headMeta.setOwningPlayer(player);
+                            head.setItemMeta(headMeta);
+                            compassInventory.setItem(i, head);
+                        }
+                        p.openInventory(compassInventory);
                     }
-                    p.openInventory(compassInventory);
                 } else {
                     if(compassMode.get(hunterIndex).equals("0")) {
                         compassMode.set(hunterIndex, "1");
