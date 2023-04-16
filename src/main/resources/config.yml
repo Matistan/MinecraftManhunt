@@ -16,3 +16,5 @@ trackPortals: true
 trackNearestMode: true
 # Set to true to teleport everyone in the same spot when the game starts.
 teleport: true
+# Set to true to open a menu to choose which speedrunner to track.
+compassMenu: false
