@@ -25,6 +25,9 @@ public class MenuListener implements Listener {
             if(e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta headMeta = (SkullMeta) e.getCurrentItem().getItemMeta();
                 whichSpeedrunner.set(hunters.indexOf(e.getWhoClicked().getName()), headMeta.getOwningPlayer().getName());
+                if(compassMode.get(hunters.indexOf(e.getWhoClicked().getName())).equals("0")) {
+                    compassMode.set(hunters.indexOf(e.getWhoClicked().getName()), "1");
+                }
             }
             e.setCancelled(true);
         }

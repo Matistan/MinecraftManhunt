@@ -4,7 +4,6 @@ import me.matistan05.minecraftmanhunt.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,12 +41,10 @@ public class InteractListener implements Listener {
             }
             if(a == Action.RIGHT_CLICK_AIR || a == Action.RIGHT_CLICK_BLOCK) {
                 if(main.getConfig().getBoolean("compassMenu")) {
-                    if(compassMode.get(hunterIndex).equals("0")) {
-                        compassMode.set(hunterIndex, "1");
-                    }
                     Inventory compassInventory = Bukkit.createInventory(p, 54, ChatColor.RED + "Choose a speedrunner!");
                     for(int i = 0; i < speedrunners.size(); i++) {
                         Player player = Bukkit.getPlayerExact(speedrunners.get(i));
+                        if(player == null) {continue;}
                         ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
                         SkullMeta headMeta = (SkullMeta) head.getItemMeta();
                         headMeta.setOwningPlayer(player);
