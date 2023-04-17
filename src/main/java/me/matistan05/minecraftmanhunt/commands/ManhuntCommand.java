@@ -291,29 +291,29 @@ public class ManhuntCommand implements CommandExecutor {
             starting = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    seconds -= 1;
-                    if(seconds == -1) {
-                        starting.cancel();
-                    }
-                    playersMessage(ChatColor.BLUE + String.valueOf(seconds + 1) + " second" + (seconds == 0 ? "" : "s") +" remaining!");
+                    playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " second" + (seconds == 1 ? "" : "s") +" remaining!");
                     for (String s : hunters) {
                         Player player = Bukkit.getPlayerExact(s);
                         if(player != null) {
-                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds + 1), "", 0, 20, 10);
+                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
                         }
                     }
                     for (String s : speedrunners) {
                         Player player = Bukkit.getPlayerExact(s);
                         if(player != null) {
-                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds + 1), "", 0, 20, 10);
+                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
                         }
+                    }
+                    seconds -= 1;
+                    if(seconds == 0) {
+                        starting.cancel();
                     }
                 }
             }.runTaskTimer(main, 0, 20);
             game = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if(inGame && seconds == -1) {
+                    if(inGame && seconds == 0) {
                         for (String s : hunters) {
                             Player player = Bukkit.getPlayerExact(s);
                             if(player != null) {
