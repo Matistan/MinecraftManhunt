@@ -34,26 +34,13 @@ public class ManhuntCommand implements CommandExecutor {
     public static boolean inGame = false;
     private static BukkitTask starting;
     public static BukkitTask game;
-    BukkitTask pausing, unpausing;
+    public static BukkitTask pausing, unpausing;
     public static ItemStack compass;
     private double finalDistance, distance;
     private Player hunter, speedrunner, target;
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
     public static Player tpPlayer;
-
-/*
-§0 - black
-§1 - blue
-§2 - green
-§3 - aqua
-§4 - red
-§5 -pink
-§6 -gold
-§7 - light grey
-§8 - grey
-§9 - light blue
- */
 
     public ManhuntCommand(Main main) {
         ManhuntCommand.main = main;
@@ -94,7 +81,7 @@ public class ManhuntCommand implements CommandExecutor {
             }
             Player target = Bukkit.getPlayerExact(args[1]);
             if(target == null) {
-                p.sendMessage(ChatColor.RED + "This player does not exist or is offline");
+                p.sendMessage(ChatColor.RED + "This player does not exist or he is offline");
                 return true;
             }
             if(inGame) {
@@ -141,12 +128,21 @@ public class ManhuntCommand implements CommandExecutor {
             }
             Player target = Bukkit.getPlayerExact(args[1]);
             if(target == null) {
-                p.sendMessage(ChatColor.RED + "This player does not exist or is offline");
+                p.sendMessage(ChatColor.RED + "This player does not exist or he is offline");
                 return true;
             }
+            if(inGame) {
+                if(speedrunners.contains(target.getName()) && speedrunners.size() == 1) {
+                    p.sendMessage(ChatColor.RED + "Cannot remove this player because he is the only speedrunner!");
+                    return true;
+                }
+                if (hunters.contains(target.getName()) && hunters.size() == 1) {
+                    p.sendMessage(ChatColor.RED + "Successfully removed " + target.getName() + " from hunters");
+                    return true;
+                }
+            }
             if(speedrunners.contains(target.getName())) {
-                speedrunners.remove(target.getName());
-                p.sendMessage(ChatColor.AQUA + "Successfully removed " + target.getName() + " from speedrunners");
+                p.sendMessage(ChatColor.RED + "Cannot remove this player because he is the only hunter!");
                 return true;
             }
             if (hunters.contains(target.getName())) {
@@ -180,6 +176,20 @@ public class ManhuntCommand implements CommandExecutor {
             if(inGame) {
                 p.sendMessage(ChatColor.YELLOW + "The game has already started!");
                 return true;
+            }
+            for(String v : speedrunners) {
+                Player player = Bukkit.getPlayerExact(v);
+                if(player == null) {
+                    p.sendMessage(ChatColor.RED + "Someone from your game is offline!");
+                    return true;
+                }
+            }
+            for(String v : hunters) {
+                Player player = Bukkit.getPlayerExact(v);
+                if(player == null) {
+                    p.sendMessage(ChatColor.RED + "Someone from your game is offline!");
+                    return true;
+                }
             }
             if(main.getConfig().getBoolean("timeSetDayOnStart")) {
                 p.getWorld().setTime(0);
@@ -217,6 +227,7 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             for (String value : hunters) {
+                unpausePlayers.add(value);
                 tar = Bukkit.getPlayerExact(value);
                 if (tar != null) {
                     if(main.getConfig().getBoolean("clearInventories")) {
@@ -246,6 +257,7 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             for (String value : speedrunners) {
+                unpausePlayers.add(value);
                 Player player = Bukkit.getPlayerExact(value);
                 if (player != null) {
                     Location loc = player.getLocation();
@@ -280,8 +292,8 @@ public class ManhuntCommand implements CommandExecutor {
                 @Override
                 public void run() {
                     seconds -= 1;
-                    if(!inGame || seconds == -1) {
-                        this.cancel();
+                    if(seconds == -1) {
+                        starting.cancel();
                     }
                     playersMessage(ChatColor.BLUE + String.valueOf(seconds + 1) + " second" + (seconds == 0 ? "" : "s") +" remaining!");
                     for (String s : hunters) {
@@ -539,21 +551,16 @@ public class ManhuntCommand implements CommandExecutor {
         if(inGame) {
             if(seconds != main.getConfig().getInt("headStartDuration")) {
                 starting.cancel();
-            } else {
-                game.cancel();
             }
+            game.cancel();
             if(main.getConfig().getBoolean("takeAwayOps")) {
                 for(int i = 0; i < hunters.size(); i++) {
-                    Player tar = Bukkit.getPlayerExact(hunters.get(i));
-                    if(tar != null) {
-                        tar.setOp(hOps.get(i));
-                    }
+                    OfflinePlayer tar = Bukkit.getOfflinePlayer(hunters.get(i));
+                    tar.setOp(hOps.get(i));
                 }
                 for(int i = 0; i < speedrunners.size(); i++) {
-                    Player tar = Bukkit.getPlayerExact(speedrunners.get(i));
-                    if(tar != null) {
-                        tar.setOp(sOps.get(i));
-                    }
+                    OfflinePlayer tar = Bukkit.getOfflinePlayer(speedrunners.get(i));
+                    tar.setOp(sOps.get(i));
                 }
             }
         }
