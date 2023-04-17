@@ -19,5 +19,6 @@ public final class Main extends JavaPlugin {
         new DropListener(this);
         new MoveListener(this);
         new MenuListener(this);
+        new DisconnectListener(this);
     }
 }
