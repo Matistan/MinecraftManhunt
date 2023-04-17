@@ -20,7 +20,11 @@ public final class Main extends JavaPlugin {
         new MoveListener(this);
         new MenuListener(this);
         new DisconnectListener(this);
-        System.out.println("Thank you for using this plugin! <3\nAuthor: Matistan\nIf you enjoy this plugin, please rate it on spigotmc.org:\n" +
-                "https://www.spigotmc.org/resources/manhunt.109010/");
+        System.out.println("*********************************************************\n" +
+                           "Thank you for using this plugin! <3\n" +
+                           "Author: Matistan\n" +
+                           "If you enjoy this plugin, please rate it on spigotmc.org:\n" +
+                           "https://www.spigotmc.org/resources/manhunt.109010/\n" +
+                           "*********************************************************");
     }
 }
