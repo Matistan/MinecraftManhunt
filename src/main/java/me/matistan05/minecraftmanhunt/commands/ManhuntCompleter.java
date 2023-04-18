@@ -72,6 +72,33 @@ public class ManhuntCompleter implements TabCompleter {
                 }
             }
         }
+        if(args.length > 1 && args[0].equals("remove")) {
+            List<String> notForTab = new LinkedList<>();
+            for(int i = 1; i < args.length - 1; i++) {
+                Player player = Bukkit.getPlayerExact(args[i]);
+                if(player == null) {continue;}
+                notForTab.add(player.getName());
+            }
+            List<String> players = new LinkedList<>();
+            for(String s : speedrunners) {
+                Player player = Bukkit.getPlayerExact(s);
+                if(player == null) {continue;}
+                players.add(player.getName());
+            }
+            for(String h : hunters) {
+                Player player = Bukkit.getPlayerExact(h);
+                if(player == null) {continue;}
+                players.add(player.getName());
+            }
+            for (String argument : notForTab) {
+                players.remove(argument);
+            }
+            for (String player : players) {
+                if (startsWith(player, args[args.length - 1])) {
+                    list.add(player);
+                }
+            }
+        }
         return list;
     }
     private boolean startsWith(String a, String b) {
