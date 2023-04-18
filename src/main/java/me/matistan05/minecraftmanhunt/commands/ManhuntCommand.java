@@ -63,95 +63,83 @@ public class ManhuntCommand implements CommandExecutor {
             }
             p.sendMessage(ChatColor.GREEN + "------- " + ChatColor.WHITE + " Minecraft Manhunt " + ChatColor.GREEN + "----------");
             p.sendMessage(ChatColor.BLUE + "Here is a list of manhunt commands:");
-            p.sendMessage(ChatColor.YELLOW + "/manhunt add <player name> <role> " + ChatColor.AQUA + "- adds a player to a manhunt game with a specified role");
-            p.sendMessage(ChatColor.YELLOW + "/manhunt remove <player name> " + ChatColor.AQUA + "- removes a player from a manhunt game");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt add <role> <player> <player> ... " + ChatColor.AQUA + "- adds players to a manhunt game with roles");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt remove <player> <player> ..." + ChatColor.AQUA + "- removes players from a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt start " + ChatColor.AQUA + "- starts a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt reset " + ChatColor.AQUA + "- resets a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt pause " + ChatColor.AQUA + "- pauses a manhunt game");
-            p.sendMessage(ChatColor.YELLOW + "/manhunt unpause " + ChatColor.AQUA + "- resumes a manhunt game, if stopped");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt unpause " + ChatColor.AQUA + "- resumes a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt list " + ChatColor.AQUA + "- shows a list of players in a manhunt game with their roles");
             p.sendMessage(ChatColor.YELLOW + "/manhunt help " + ChatColor.AQUA + "- shows a list of manhunt commands");
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
             return true;
         }
         if (args[0].equals("add")) {
-            if(args.length != 3) {
+            if(args.length < 3) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
-                return true;
-            }
-            Player target = Bukkit.getPlayerExact(args[1]);
-            if(target == null) {
-                p.sendMessage(ChatColor.RED + "This player does not exist or he is offline");
                 return true;
             }
             if(inGame) {
                 p.sendMessage(ChatColor.RED + "The game has already started!");
                 return true;
             }
-            if(args[2].equals("speedrunner")) {
-                if(speedrunners.contains(target.getName())) {
-                    p.sendMessage(ChatColor.RED + "This player is already a speedrunner!");
-                    return true;
-                }
-                if(hunters.contains(target.getName())) {
-                    speedrunners.add(target.getName());
+            int count = 0;
+            if(args[1].equals("speedrunner")) {
+                for(int i = 2; i < args.length; i++) {
+                    target = Bukkit.getPlayerExact(args[i]);
+                    if(target == null || speedrunners.contains(target.getName())) {continue;}
                     hunters.remove(target.getName());
-                    p.sendMessage(ChatColor.AQUA + "Changed " + target.getName() + " role from hunter to speedrunner!");
-                    return true;
+                    speedrunners.add(target.getName());
+                    count++;
                 }
-                speedrunners.add(target.getName());
-                p.sendMessage(ChatColor.AQUA + "Successfully added new speedrunner " + target.getName() + " to the game!");
+                if(count > 0) {
+                    p.sendMessage(ChatColor.AQUA + "Successfully added " + count + " new speedrunner" + (count == 1 ? "" : "s") + " to the game!");
+                } else {
+                    p.sendMessage(ChatColor.RED + "Could not add " + (args.length == 3 ? "this player!" : "these players!"));
+                }
                 return true;
             }
-            if(args[2].equals("hunter")) {
-                if(hunters.contains(target.getName())) {
-                    p.sendMessage(ChatColor.RED + "This player is already a hunter!");
-                    return true;
-                }
-                if(speedrunners.contains(target.getName())) {
+            if(args[1].equals("hunter")) {
+                for(int i = 2; i < args.length; i++) {
+                    target = Bukkit.getPlayerExact(args[i]);
+                    if(target == null || hunters.contains(target.getName())) {continue;}
                     speedrunners.remove(target.getName());
                     hunters.add(target.getName());
-                    p.sendMessage(ChatColor.AQUA + "Changed " + target.getName() + " role from speedrunner to hunter!");
-                    return true;
+                    count++;
                 }
-                hunters.add(target.getName());
-                p.sendMessage(ChatColor.AQUA + "Successfully added new hunter " + target.getName() + " to the game!");
+                if(count > 0) {
+                    p.sendMessage(ChatColor.AQUA + "Successfully added " + count + " new hunter" + (count == 1 ? "" : "s") + " to the game!");
+                } else {
+                    p.sendMessage(ChatColor.RED + "Could not add " + (args.length == 3 ? "this player!" : "these players!"));
+                }
                 return true;
             }
             p.sendMessage(ChatColor.RED + "Wrong manhunt role. For help, type: /manhunt help");
             return true;
         }
         if (args[0].equals("remove")) {
-            if(args.length != 2) {
+            if(args.length < 2) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
-            Player target = Bukkit.getPlayerExact(args[1]);
-            if(target == null) {
-                p.sendMessage(ChatColor.RED + "This player does not exist or he is offline");
-                return true;
-            }
-            if(inGame) {
-                if(speedrunners.contains(target.getName()) && speedrunners.size() == 1) {
-                    p.sendMessage(ChatColor.RED + "Cannot remove this player because he is the only speedrunner!");
-                    return true;
+            int count = 0;
+                for(int i = 1; i < args.length; i++) {
+                    target = Bukkit.getPlayerExact(args[i]);
+                    if(target == null || (inGame && (speedrunners.contains(target.getName()) && speedrunners.size() == 1 || hunters.contains(target.getName()) &&
+                            hunters.size() == 1)) || (!speedrunners.contains(target.getName()) && !hunters.contains(target.getName()))) {continue;}
+                    if(hunters.contains(target.getName())) {
+                        hunters.remove(target.getName());
+                    } else {
+                        speedrunners.remove(target.getName());
+                    }
+                    count++;
                 }
-                if (hunters.contains(target.getName()) && hunters.size() == 1) {
-                    p.sendMessage(ChatColor.RED + "Successfully removed " + target.getName() + " from hunters");
-                    return true;
+                if(count > 0) {
+                    p.sendMessage(ChatColor.AQUA + "Successfully removed " + count + " player" + (count == 1 ? "" : "s") + " from the game!");
+                } else {
+                    p.sendMessage(ChatColor.RED + "Could not remove " + (args.length == 2 ? "this player!" : "these players!"));
                 }
-            }
-            if(speedrunners.contains(target.getName())) {
-                p.sendMessage(ChatColor.RED + "Cannot remove this player because he is the only hunter!");
                 return true;
-            }
-            if (hunters.contains(target.getName())) {
-                hunters.remove(target.getName());
-                p.sendMessage(ChatColor.AQUA + "Successfully removed " + target.getName() + " from hunters");
-                return true;
-            }
-            p.sendMessage(ChatColor.RED + "This player is not in your manhunt game");
-            return true;
         }
         if (args[0].equals("start")) {
             if(args.length != 1) {
