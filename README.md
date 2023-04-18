@@ -29,7 +29,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - Compass has two modes:
 - - Tracks every speedrunner individually
 - - Or tracks the nearest one
-- Need to take a break during the game? Have to go to the toilet? You can pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can unpause and continue playing!
+- Need to take a break during the game? Have to go to the restroom? You can pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can unpause and continue playing!
 
 ## How to use it
 
@@ -39,8 +39,8 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 
 ## Commands
 
-- `/manhunt add <player name> <role>` - adds a player with a specified role
-- `/manhunt remove <player name>` - removes a player
+- `/manhunt add <role> <player> <player> ...` - adds players with roles
+- `/manhunt remove <player> <player> ...` - removes players
 - `/manhunt start` - starts a game
 - `/manhunt reset` - resets a game
 - `/manhunt pause` - pauses a game
