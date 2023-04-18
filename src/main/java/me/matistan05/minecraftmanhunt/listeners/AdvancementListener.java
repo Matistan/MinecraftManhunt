@@ -16,7 +16,7 @@ public class AdvancementListener implements Listener {
     }
 
     @EventHandler
-    public void OnAdvancement(PlayerAdvancementDoneEvent e) {
+    public void AdvancementEvent(PlayerAdvancementDoneEvent e) {
         if(!inGame){return;}
         Player p = e.getPlayer();
         if((e.getAdvancement().getKey().getKey().equals("end/kill_dragon")) && speedrunners.contains(p.getName())) {
