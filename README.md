@@ -34,7 +34,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 ## How to use it
 
 - drag the .jar file from the [Release tab](https://github.com/Matistan/MinecraftManhunt/releases) to your plugins folder on your server.
-- select players to your game using `/manhunt add <player_name> <role>` command
+- add players to your game using `/manhunt add <role> <player> <player> ... `
 - type `/manhunt start` to start the match!
 
 ## Commands
