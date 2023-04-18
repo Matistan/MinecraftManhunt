@@ -29,7 +29,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - Compass has two modes:
 - - Tracks every speedrunner individually
 - - Or tracks the nearest one
-- You can vote to pause the game! During that time, no one can move. Then you can vote to unpause and continue playing!
+- Need to take a break during the game? Have to go to the toilet? You can pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can unpause and continue playing!
 
 ## How to use it
 
@@ -44,7 +44,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - `/manhunt start` - starts a game
 - `/manhunt reset` - resets a game
 - `/manhunt pause` - pauses a game
-- `/manhunt unpause` - resumes a game, if it's stopped
+- `/manhunt unpause` - resumes a game
 - `/manhunt list` - shows a list of players in a manhunt game with their roles
 - `/manhunt help` - shows a list of manhunt commands
 
