@@ -235,7 +235,6 @@ public class ManhuntCommand implements CommandExecutor {
                     tar.setHealth(20);
                     tar.setFoodLevel(20);
                     tar.setSaturation(20);
-                    tar.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 20 * seconds, 255));
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
                         AdvancementProgress progress = tar.getAdvancementProgress(advancements.next());
@@ -306,6 +305,7 @@ public class ManhuntCommand implements CommandExecutor {
                             Player player = Bukkit.getPlayerExact(s);
                             if(player != null) {
                                 player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                                player.setFallDistance(0);
                             }
                         }
                         for (String s : speedrunners) {
@@ -421,18 +421,6 @@ public class ManhuntCommand implements CommandExecutor {
             if(pausePlayers.size() == hunters.size() + speedrunners.size()) {
                 pausing.cancel();
                 unpausePlayers.clear();
-                for (String s : hunters) {
-                    Player player = Bukkit.getPlayerExact(s);
-                    if(player != null) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200000, 255));
-                    }
-                }
-                for (String s : speedrunners) {
-                    Player player = Bukkit.getPlayerExact(s);
-                    if(player != null) {
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200000, 255));
-                    }
-                }
                 playersMessage(ChatColor.AQUA + "Game paused!");
                 return true;
             }
@@ -477,15 +465,15 @@ public class ManhuntCommand implements CommandExecutor {
                 for (String s : hunters) {
                     Player player = Bukkit.getPlayerExact(s);
                     if(player != null) {
-                        player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                        player.setFallDistance(0);
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 255));
                     }
                 }
                 for (String s : speedrunners) {
                     Player player = Bukkit.getPlayerExact(s);
                     if(player != null) {
-                        player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 200, 255));
+                        player.setFallDistance(0);
+                        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 255));
                     }
                 }
                 return true;
