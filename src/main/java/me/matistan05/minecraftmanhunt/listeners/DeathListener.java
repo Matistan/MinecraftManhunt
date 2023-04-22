@@ -3,6 +3,7 @@ package me.matistan05.minecraftmanhunt.listeners;
 import me.matistan05.minecraftmanhunt.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,7 +12,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class DeathListener implements Listener {
+    Main main;
     public DeathListener(Main main) {
+        this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
     @EventHandler
@@ -46,6 +49,9 @@ public class DeathListener implements Listener {
                     speedrunners.remove(p.getName());
                     playersMessage(ChatColor.DARK_RED + "Speedrunner " + p.getName() + " died!");
                     playersMessage(ChatColor.DARK_RED + "There are " + speedrunners.size() + " speedrunner" + (speedrunners.size() == 1 ? "" : "s") + " left alive!");
+                    if(main.getConfig().getBoolean("takeAwayOps")) {
+                        p.setOp(sOps.get(speedrunners.indexOf(p.getName())));
+                    }
                 }
             }
         }
