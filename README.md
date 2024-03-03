@@ -52,18 +52,19 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 
 Edit the `plugins/MinecraftManhunt/config.yml` file to change the following options:
 
-Key|Description|Type|recommended
---|--|--|--
-timeSetDayOnStart | Set to true to set the time to day automatically when the game starts. | boolean | true
-weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts. | boolean | true
-takeAwayOps | Set to true to take away OPs for the duration of the game. | boolean | true
-clearInventories | Set to true to clear players inventories when the game starts. | boolean | true
-headStartDuration | Set the time for speedrunners to run away. | int | 10
-speedrunnersLives | Set the amount of lives for speedrunners. | int | 1
-trackPortals | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true
-trackNearestMode | Set to true to enable tracking the nearest speedrunner on compasses. | boolean | true
-teleport | Set to true to teleport everyone in the same spot when the game starts. | boolean | true
-compassMenu | Set to true to open a menu to choose which speedrunner to track. | boolean | false; true if you're playing with a lot of speedrunners
+| Key                 | Description                                                                                 | Type    | recommended                                                   |
+|---------------------|---------------------------------------------------------------------------------------------|---------|---------------------------------------------------------------|
+| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.                      | boolean | true                                                          |
+| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts.                 | boolean | true                                                          |
+| takeAwayOps         | Set to true to take away OPs for the duration of the game.                                  | boolean | true                                                          |
+| clearInventories    | Set to true to clear players inventories when the game starts.                              | boolean | true                                                          |
+| headStartDuration   | Set the time for speedrunners to run away.                                                  | int     | 10                                                            |
+| speedrunnersLives   | Set the amount of lives for speedrunners.                                                   | int     | 1                                                             |
+| trackPortals        | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true                                                          |
+| trackNearestMode    | Set to true to enable tracking the nearest speedrunner on compasses.                        | boolean | true                                                          |
+| teleport            | Set to true to teleport everyone in the same spot when the game starts.                     | boolean | true                                                          |
+| compassMenu         | Set to true to open a menu to choose which speedrunner to track.                            | boolean | false; true if you're playing with a lot of speedrunners      |
+| usePermissions      | Set to true to require users to have permission to use certain commands.                    | boolean | false; true if you don't trust the people you're playing with |
 
 ### Bugs & Issues
 

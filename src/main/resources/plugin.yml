@@ -1,5 +1,5 @@
 name: MinecraftManhunt
-version: 1.2.3
+version: '${project.version}'
 main: me.matistan05.minecraftmanhunt.Main
 api-version: 1.16
 authors: [Matistan05]
@@ -8,3 +8,6 @@ commands:
   manhunt:
     description: This command sets up the whole manhunt game
     usage: /<command>
+permissions:
+  manhunt.manhunt:
+    description: Allows the player to use /manhunt command

@@ -52,6 +52,13 @@ public class ManhuntCommand implements CommandExecutor {
             return true;
         }
         Player p = (Player) sender;
+        if(!p.hasPermission("manhunt.manhunt") && main.getConfig().getBoolean("usePermissions") &&
+                (!inGame
+                        || !(hunters.contains(p.getName())|| speedrunners.contains(p.getName()))
+                        || !(args[0].equals("pause") || args[0].equals("unpause")))) {
+            p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+            return true;
+        }
         if(args.length == 0) {
             p.sendMessage(ChatColor.RED + "You must type an argument. For help, type: /manhunt help");
             return true;

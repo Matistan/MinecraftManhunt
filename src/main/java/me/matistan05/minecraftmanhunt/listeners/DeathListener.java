@@ -3,7 +3,6 @@ package me.matistan05.minecraftmanhunt.listeners;
 import me.matistan05.minecraftmanhunt.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
