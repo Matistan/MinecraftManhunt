@@ -52,18 +52,15 @@ public class ManhuntCommand implements CommandExecutor {
             return true;
         }
         Player p = (Player) sender;
-        if(!p.hasPermission("manhunt.manhunt") && main.getConfig().getBoolean("usePermissions") &&
-                (!inGame
-                        || !(hunters.contains(p.getName())|| speedrunners.contains(p.getName()))
-                        || !(args[0].equals("pause") || args[0].equals("unpause")))) {
-            p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
-            return true;
-        }
         if(args.length == 0) {
             p.sendMessage(ChatColor.RED + "You must type an argument. For help, type: /manhunt help");
             return true;
         }
         if (args[0].equals("help")) {
+            if(!p.hasPermission("manhunt.help") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -82,6 +79,10 @@ public class ManhuntCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equals("add")) {
+            if(!p.hasPermission("manhunt.add") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length < 3) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -125,6 +126,10 @@ public class ManhuntCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equals("remove")) {
+            if(!p.hasPermission("manhunt.remove") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length < 2) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -149,6 +154,10 @@ public class ManhuntCommand implements CommandExecutor {
                 return true;
         }
         if (args[0].equals("start")) {
+            if(!p.hasPermission("manhunt.start") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -161,10 +170,10 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "There are no hunters and speedrunners!");
                 return true;
             }
-            if(speedrunners.size() == 0) {
+            if(speedrunners.isEmpty()) {
                 p.sendMessage(ChatColor.RED + "There are no speedrunners!");
                 return true;
-            }if(hunters.size() == 0) {
+            }if(hunters.isEmpty()) {
                 p.sendMessage(ChatColor.RED + "There are no hunters!");
                 return true;
             }
@@ -394,6 +403,10 @@ public class ManhuntCommand implements CommandExecutor {
             return true;
         }
         if (args[0].equals("reset")) {
+            if(!p.hasPermission("manhunt.reset") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if(args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -413,6 +426,10 @@ public class ManhuntCommand implements CommandExecutor {
             }
             if(!(hunters.contains(p.getName()) || speedrunners.contains(p.getName()))) {
                 p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
+                return true;
+            }
+            if(!main.getConfig().getBoolean("enablePauses")) {
+                p.sendMessage(ChatColor.RED + "Pauses are disabled!");
                 return true;
             }
             if(pausePlayers.size() == hunters.size() + speedrunners.size()) {
@@ -453,6 +470,10 @@ public class ManhuntCommand implements CommandExecutor {
             }
             if(!(hunters.contains(p.getName()) || speedrunners.contains(p.getName()))) {
                 p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
+                return true;
+            }
+            if(!main.getConfig().getBoolean("enablePauses")) {
+                p.sendMessage(ChatColor.RED + "Pauses are disabled!");
                 return true;
             }
             if (unpausePlayers.size() == hunters.size() + speedrunners.size()) {
@@ -506,13 +527,13 @@ public class ManhuntCommand implements CommandExecutor {
                 return true;
             }
             p.sendMessage(ChatColor.GREEN + "------- " + ChatColor.WHITE + " Minecraft Manhunt " + ChatColor.GREEN + "----------");
-            if(speedrunners.size() > 0) {
+            if(!speedrunners.isEmpty()) {
                 p.sendMessage(ChatColor.GOLD + "Speedrunners:");
             }
             for (String s : speedrunners) {
                 p.sendMessage(ChatColor.AQUA + s);
             }
-            if(hunters.size() > 0) {
+            if(!hunters.isEmpty()) {
                 p.sendMessage(ChatColor.GOLD + "Hunters:");
             }
             for (String s : hunters) {

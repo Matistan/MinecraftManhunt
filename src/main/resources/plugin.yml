@@ -10,4 +10,11 @@ commands:
     usage: /<command>
 permissions:
   manhunt.manhunt:
-    description: Allows the player to use /manhunt command
+    description: Allows the player to use all /manhunt commands
+    children:
+      manhunt.add: true
+      manhunt.remove: true
+      manhunt.start: true
+      manhunt.reset: true
+      manhunt.list: true
+      manhunt.help: true

@@ -64,7 +64,22 @@ Edit the `plugins/MinecraftManhunt/config.yml` file to change the following opti
 | trackNearestMode    | Set to true to enable tracking the nearest speedrunner on compasses.                        | boolean | true                                                          |
 | teleport            | Set to true to teleport everyone in the same spot when the game starts.                     | boolean | true                                                          |
 | compassMenu         | Set to true to open a menu to choose which speedrunner to track.                            | boolean | false; true if you're playing with a lot of speedrunners      |
+| enablePauses        | Set to true to enable the pause feature (/manhunt pause).                                   | boolean | true                                                          |
 | usePermissions      | Set to true to require users to have permission to use certain commands.                    | boolean | false; true if you don't trust the people you're playing with |
+
+## Permissions
+
+If `usePermissions` is set to `true` in the `config.yml` file, players without ops will need the following permissions to use the commands:
+
+| Permission      | Description                                              |
+|-----------------|----------------------------------------------------------|
+| manhunt.manhunt | Allows the player to use all `/manhunt` commands.        |
+| manhunt.add     | Allows the player to use the `/manhunt add` command.     |
+| manhunt.remove  | Allows the player to use the `/manhunt remove` command.  |
+| manhunt.start   | Allows the player to use the `/manhunt start` command.   |
+| manhunt.reset   | Allows the player to use the `/manhunt reset` command.   |
+| manhunt.list    | Allows the player to use the `/manhunt list` command.    |
+| manhunt.help    | Allows the player to use the `/manhunt help` command.    |
 
 ### Bugs & Issues
 

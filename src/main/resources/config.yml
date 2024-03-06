@@ -25,6 +25,8 @@ trackNearestMode: true
 teleport: true
 # Set to true to open a menu to choose which speedrunner to track.
 compassMenu: false
+# Set to true to enable the pause feature (/manhunt pause).
+enablePauses: true
 # Set to true to enable permission checks.
 ## Note: This feature needs a permissions plugin (such as LuckPerms) to work.
 usePermissions: false
