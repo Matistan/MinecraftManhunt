@@ -446,6 +446,7 @@ public class ManhuntCommand implements CommandExecutor {
                 pausing.cancel();
                 unpausePlayers.clear();
                 playersMessage(ChatColor.AQUA + "Game paused!");
+                p.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
                 return true;
             }
             if(pausePlayers.size() == 1) {
@@ -490,6 +491,7 @@ public class ManhuntCommand implements CommandExecutor {
                 unpausing.cancel();
                 pausePlayers.clear();
                 playersMessage(ChatColor.AQUA + "Game unpaused!");
+                p.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
                 for (String s : hunters) {
                     Player player = Bukkit.getPlayerExact(s);
                     if(player != null) {
