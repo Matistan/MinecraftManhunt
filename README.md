@@ -29,7 +29,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - Compass has two modes:
 - - Tracks every speedrunner individually
 - - Or tracks the nearest one
-- Need to take a break during the game? Have to go to the restroom? You can pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can unpause and continue playing!
+- Need to take a break during the game? Have to go to the restroom? I know that the manhunt game can last even few hours, so I've made the feature to pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can unpause and continue playing!
 
 ## How to use it
 
