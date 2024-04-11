@@ -50,6 +50,12 @@ public class ManhuntCompleter implements TabCompleter {
             }
         }
         if(args.length > 2 && args[0].equals("add")) {
+            if (args.length > 3 && args[1].equals("@a")) {
+                return list;
+            }
+            if (args.length == 3 && startsWith("@a", args[2])) {
+                list.add("@a");
+            }
             List<String> notForTab = new LinkedList<>();
             for(int i = 2; i < args.length - 1; i++) {
                 Player player = Bukkit.getPlayerExact(args[i]);
@@ -73,6 +79,12 @@ public class ManhuntCompleter implements TabCompleter {
             }
         }
         if(args.length > 1 && args[0].equals("remove")) {
+            if (args.length > 2 && args[1].equals("@a")) {
+                return list;
+            }
+            if (args.length == 2 && startsWith("@a", args[1])) {
+                list.add("@a");
+            }
             List<String> notForTab = new LinkedList<>();
             for(int i = 1; i < args.length - 1; i++) {
                 Player player = Bukkit.getPlayerExact(args[i]);
