@@ -29,7 +29,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - Compass has two modes:
 - - Tracks every speedrunner individually
 - - Or tracks the nearest one
-- Need to take a break during the game? Have to go to the restroom? I know that the manhunt game can last even few hours, so I've made the feature to pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can unpause and continue playing!
+- Need to take a break during the game? Have to go to the restroom? I know that the manhunt game can last even few hours, so I've made the feature to pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can resume the game and continue playing!
 
 ## How to use it
 
@@ -63,7 +63,7 @@ Edit the `plugins/MinecraftManhunt/config.yml` file to change the following opti
 | headStartDuration   | Set the time for speedrunners to run away.                                                  | int     | 10                                                            |
 | speedrunnersLives   | Set the amount of lives for speedrunners.                                                   | int     | 1                                                             |
 | trackPortals        | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true                                                          |
-| trackNearestMode    | Set to true to enable tracking the nearest speedrunner on compasses.                        | boolean | true                                                          |
+| trackNearestMode    | Set to true to enable mode on the compass to track the nearest speedrunner.                 | boolean | true                                                          |
 | teleport            | Set to true to teleport everyone in the same spot when the game starts.                     | boolean | true                                                          |
 | compassMenu         | Set to true to open a menu to choose which speedrunner to track.                            | boolean | false; true if you're playing with a lot of speedrunners      |
 | enablePauses        | Set to true to enable the pause feature (/manhunt pause).                                   | boolean | true                                                          |
