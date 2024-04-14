@@ -24,11 +24,14 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 
 ## Features
 
-- Speedrunners-tracking compass: Hunters receive a special compass at the start to be able to locate speedrunners
-- When a speedrunner is in a different dimension, compass will say it and will track their portal
 - Compass has two modes:
-- - Tracks every speedrunner individually
+- - Tracks every speedrunner individually,
 - - Or tracks the nearest one
+- Headstart support
+- Heals and feeds players on start
+- Clear inventories and resets achievements on start
+- Time set day and weather clear on start
+- When a speedrunner is in a different dimension, compass will display it and will track their portal
 - Need to take a break during the game? Have to go to the restroom? I know that the manhunt game can last even few hours, so I've made the feature to pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can resume the game and continue playing!
 
 ## How to use it
