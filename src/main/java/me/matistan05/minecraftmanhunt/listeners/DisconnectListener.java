@@ -13,17 +13,18 @@ public class DisconnectListener implements Listener {
     public DisconnectListener(Main main) {
         Bukkit.getPluginManager().registerEvents(this, main);
     }
+
     @EventHandler
     public void DisconnectEvent(PlayerQuitEvent e) {
-        if(inGame && (speedrunners.contains(e.getPlayer().getName()) || hunters.contains(e.getPlayer().getName())) && ((pausePlayers.contains(e.getPlayer().getName()) && pausePlayers.size() < hunters.size() + speedrunners.size()) || (unpausePlayers.contains(e.getPlayer().getName()) && unpausePlayers.size() < hunters.size() + speedrunners.size()))) {
-            if(pausePlayers.contains(e.getPlayer().getName()) && pausePlayers.size() < hunters.size() + speedrunners.size()) {
+        if (inGame && (speedrunners.contains(e.getPlayer().getName()) || hunters.contains(e.getPlayer().getName())) && ((pausePlayers.contains(e.getPlayer().getName()) && pausePlayers.size() < hunters.size() + speedrunners.size()) || (unpausePlayers.contains(e.getPlayer().getName()) && unpausePlayers.size() < hunters.size() + speedrunners.size()))) {
+            if (pausePlayers.contains(e.getPlayer().getName()) && pausePlayers.size() < hunters.size() + speedrunners.size()) {
                 pausePlayers.remove(e.getPlayer().getName());
-                if(pausePlayers.size() == 0) {
+                if (pausePlayers.isEmpty()) {
                     pausing.cancel();
                 }
             } else {
                 unpausePlayers.remove(e.getPlayer().getName());
-                if(unpausePlayers.size() == 0) {
+                if (unpausePlayers.isEmpty()) {
                     unpausing.cancel();
                 }
             }

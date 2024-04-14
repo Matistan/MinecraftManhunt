@@ -11,17 +11,17 @@ import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class DamageListener implements Listener {
     private final Main main;
+
     public DamageListener(Main main) {
         this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
+
     @EventHandler
     public void DamageEvent(EntityDamageEvent e) {
-        if(!(e.getEntity() instanceof Player)) {
-            return;
-        }
+        if (!(e.getEntity() instanceof Player)) return;
         Player player = (Player) e.getEntity();
-        if(inGame && ((pausePlayers.size() == (hunters.size() + speedrunners.size()) && (hunters.contains(player.getName()) || speedrunners.contains(player.getName()))) ||
+        if (inGame && ((pausePlayers.size() == (hunters.size() + speedrunners.size()) && (hunters.contains(player.getName()) || speedrunners.contains(player.getName()))) ||
                 (seconds != main.getConfig().getInt("headStartDuration") && hunters.contains(player.getName())))) {
             e.setCancelled(true);
         }

@@ -16,40 +16,40 @@ public class ManhuntCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         List<String> list = new LinkedList<>();
-        if(args.length == 1) {
-            if(startsWith("add", args[0])) {
+        if (args.length == 1) {
+            if (startsWith("add", args[0])) {
                 list.add("add");
             }
-            if(startsWith("remove", args[0])) {
+            if (startsWith("remove", args[0])) {
                 list.add("remove");
             }
-            if(startsWith("start", args[0])) {
+            if (startsWith("start", args[0])) {
                 list.add("start");
             }
-            if(startsWith("pause", args[0])) {
+            if (startsWith("pause", args[0])) {
                 list.add("pause");
             }
-            if(startsWith("unpause", args[0])) {
+            if (startsWith("unpause", args[0])) {
                 list.add("unpause");
             }
-            if(startsWith("reset", args[0])) {
+            if (startsWith("reset", args[0])) {
                 list.add("reset");
             }
-            if(startsWith("list", args[0])) {
+            if (startsWith("list", args[0])) {
                 list.add("list");
             }
-            if(startsWith("help", args[0])) {
+            if (startsWith("help", args[0])) {
                 list.add("help");
             }
-        } else if(args.length == 2 && args[0].equals("add")) {
-            if(startsWith("speedrunner", args[1])) {
+        } else if (args.length == 2 && args[0].equals("add")) {
+            if (startsWith("speedrunner", args[1])) {
                 list.add("speedrunner");
             }
-            if(startsWith("hunter", args[1])) {
+            if (startsWith("hunter", args[1])) {
                 list.add("hunter");
             }
         }
-        if(args.length > 2 && args[0].equals("add")) {
+        if (args.length > 2 && args[0].equals("add")) {
             if (args.length > 3 && args[1].equals("@a")) {
                 return list;
             }
@@ -57,15 +57,15 @@ public class ManhuntCompleter implements TabCompleter {
                 list.add("@a");
             }
             List<String> notForTab = new LinkedList<>();
-            for(int i = 2; i < args.length - 1; i++) {
+            for (int i = 2; i < args.length - 1; i++) {
                 Player player = Bukkit.getPlayerExact(args[i]);
-                if(player == null) {continue;}
+                if (player == null) continue;
                 notForTab.add(player.getName());
             }
-            if(args[1].equals("speedrunner")) {
+            if (args[1].equals("speedrunner")) {
                 notForTab.addAll(speedrunners);
             }
-            if(args[1].equals("hunter")) {
+            if (args[1].equals("hunter")) {
                 notForTab.addAll(hunters);
             }
             List<Player> players = new LinkedList<>(Bukkit.getOnlinePlayers());
@@ -78,7 +78,7 @@ public class ManhuntCompleter implements TabCompleter {
                 }
             }
         }
-        if(args.length > 1 && args[0].equals("remove")) {
+        if (args.length > 1 && args[0].equals("remove")) {
             if (args.length > 2 && args[1].equals("@a")) {
                 return list;
             }
@@ -86,20 +86,20 @@ public class ManhuntCompleter implements TabCompleter {
                 list.add("@a");
             }
             List<String> notForTab = new LinkedList<>();
-            for(int i = 1; i < args.length - 1; i++) {
+            for (int i = 1; i < args.length - 1; i++) {
                 Player player = Bukkit.getPlayerExact(args[i]);
-                if(player == null) {continue;}
+                if (player == null) continue;
                 notForTab.add(player.getName());
             }
             List<String> players = new LinkedList<>();
-            for(String s : speedrunners) {
+            for (String s : speedrunners) {
                 Player player = Bukkit.getPlayerExact(s);
-                if(player == null) {continue;}
+                if (player == null) continue;
                 players.add(player.getName());
             }
-            for(String h : hunters) {
+            for (String h : hunters) {
                 Player player = Bukkit.getPlayerExact(h);
-                if(player == null) {continue;}
+                if (player == null) continue;
                 players.add(player.getName());
             }
             for (String argument : notForTab) {
@@ -113,10 +113,11 @@ public class ManhuntCompleter implements TabCompleter {
         }
         return list;
     }
+
     private boolean startsWith(String a, String b) {
-        if(b.length() <= a.length()) {
-            for(int i = 0; i < b.length(); i++) {
-                if(b.toLowerCase().charAt(i) != a.toLowerCase().charAt(i)) {
+        if (b.length() <= a.length()) {
+            for (int i = 0; i < b.length(); i++) {
+                if (b.toLowerCase().charAt(i) != a.toLowerCase().charAt(i)) {
                     return false;
                 }
             }

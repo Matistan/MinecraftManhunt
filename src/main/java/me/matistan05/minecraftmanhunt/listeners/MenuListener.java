@@ -13,24 +13,26 @@ import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class MenuListener implements Listener {
     private final Main main;
+
     public MenuListener(Main main) {
         this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
+
     @EventHandler
     public void MenuClickEvent(InventoryClickEvent e) {
-        if(!inGame || seconds != main.getConfig().getInt("headStartDuration")){return;}
-        if(e.getView().getTitle().equals(ChatColor.RED + "Choose a speedrunner!")) {
-            if(e.getCurrentItem() == null) {return;}
-            if(e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+        if (!inGame || seconds != main.getConfig().getInt("headStartDuration")) return;
+        if (e.getView().getTitle().equals(ChatColor.RED + "Choose a speedrunner!")) {
+            if (e.getCurrentItem() == null) return;
+            if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta headMeta = (SkullMeta) e.getCurrentItem().getItemMeta();
                 whichSpeedrunner.set(hunters.indexOf(e.getWhoClicked().getName()), headMeta.getOwningPlayer().getName());
-                if(compassMode.get(hunters.indexOf(e.getWhoClicked().getName())).equals("0")) {
+                if (compassMode.get(hunters.indexOf(e.getWhoClicked().getName())).equals("0")) {
                     compassMode.set(hunters.indexOf(e.getWhoClicked().getName()), "1");
                 }
             }
             e.setCancelled(true);
-            if(e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+            if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 e.getWhoClicked().closeInventory();
             }
         }

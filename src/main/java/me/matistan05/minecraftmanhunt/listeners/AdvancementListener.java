@@ -17,9 +17,9 @@ public class AdvancementListener implements Listener {
 
     @EventHandler
     public void AdvancementEvent(PlayerAdvancementDoneEvent e) {
-        if(!inGame){return;}
+        if (!inGame) return;
         Player p = e.getPlayer();
-        if((e.getAdvancement().getKey().getKey().equals("end/kill_dragon")) && speedrunners.contains(p.getName())) {
+        if ((e.getAdvancement().getKey().getKey().equals("end/kill_dragon")) && speedrunners.contains(p.getName())) {
             playersMessage(ChatColor.DARK_GREEN + p.getName() + " killed a dragon!");
             playersMessage(ChatColor.DARK_GREEN + "Speedrunners won!");
             reset();
