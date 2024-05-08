@@ -13,7 +13,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         getServer().getPluginCommand("manhunt").setExecutor(new ManhuntCommand(this));
-        getCommand("manhunt").setTabCompleter(new ManhuntCompleter());
+        getCommand("manhunt").setTabCompleter(new ManhuntCompleter(this));
         new DeathListener(this);
         new AdvancementListener(this);
         new InteractListener(this);

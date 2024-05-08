@@ -17,4 +17,5 @@ permissions:
       manhunt.start: true
       manhunt.reset: true
       manhunt.list: true
+      manhunt.rules: true
       manhunt.help: true

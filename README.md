@@ -51,11 +51,12 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - `/manhunt pause` - pauses a game
 - `/manhunt unpause` - resumes a game
 - `/manhunt list` - shows a list of players in a manhunt game with their roles
+- `/manhunt rules <rule> value(optional)` - changes some additional rules of the game (in config.yml)
 - `/manhunt help` - shows a list of manhunt commands
 
 ## Configuration Options
 
-Edit the `plugins/MinecraftManhunt/config.yml` file to change the following options:
+Use the command `/manhunt rules` or edit the `plugins/MinecraftManhunt/config.yml` file to change the following options:
 
 | Key                 | Description                                                                                 | Type    | recommended                                                   |
 |---------------------|---------------------------------------------------------------------------------------------|---------|---------------------------------------------------------------|
@@ -76,15 +77,16 @@ Edit the `plugins/MinecraftManhunt/config.yml` file to change the following opti
 
 If `usePermissions` is set to `true` in the `config.yml` file, players without ops will need the following permissions to use the commands:
 
-| Permission      | Description                                              |
-|-----------------|----------------------------------------------------------|
-| manhunt.manhunt | Allows the player to use all `/manhunt` commands.        |
-| manhunt.add     | Allows the player to use the `/manhunt add` command.     |
-| manhunt.remove  | Allows the player to use the `/manhunt remove` command.  |
-| manhunt.start   | Allows the player to use the `/manhunt start` command.   |
-| manhunt.reset   | Allows the player to use the `/manhunt reset` command.   |
-| manhunt.list    | Allows the player to use the `/manhunt list` command.    |
-| manhunt.help    | Allows the player to use the `/manhunt help` command.    |
+| Permission      | Description                                             |
+|-----------------|---------------------------------------------------------|
+| manhunt.manhunt | Allows the player to use all `/manhunt` commands.       |
+| manhunt.add     | Allows the player to use the `/manhunt add` command.    |
+| manhunt.remove  | Allows the player to use the `/manhunt remove` command. |
+| manhunt.start   | Allows the player to use the `/manhunt start` command.  |
+| manhunt.reset   | Allows the player to use the `/manhunt reset` command.  |
+| manhunt.list    | Allows the player to use the `/manhunt list` command.   |
+| manhunt.rules   | Allows the player to use the `/manhunt rules` command.  |
+| manhunt.help    | Allows the player to use the `/manhunt help` command.   |
 
 ### Bugs & Issues
 

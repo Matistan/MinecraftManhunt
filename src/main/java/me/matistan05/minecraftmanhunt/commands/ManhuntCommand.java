@@ -63,15 +63,53 @@ public class ManhuntCommand implements CommandExecutor {
             }
             p.sendMessage(ChatColor.GREEN + "------- " + ChatColor.WHITE + " Minecraft Manhunt " + ChatColor.GREEN + "----------");
             p.sendMessage(ChatColor.BLUE + "Here is a list of manhunt commands:");
-            p.sendMessage(ChatColor.YELLOW + "/manhunt add <role> <player> <player> ... " + ChatColor.AQUA + "- adds players to a manhunt game with roles");
-            p.sendMessage(ChatColor.YELLOW + "/manhunt remove <player> <player> ..." + ChatColor.AQUA + "- removes players from a manhunt game");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt add <role> <player> <player> ... " + ChatColor.AQUA + "- adds players to a game with roles");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt add <role> @a " + ChatColor.AQUA + "- adds all players with roles");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt remove <player> <player> ..." + ChatColor.AQUA + "- removes players from a  game");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt remove @a " + ChatColor.AQUA + "- removes all players");
             p.sendMessage(ChatColor.YELLOW + "/manhunt start " + ChatColor.AQUA + "- starts a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt reset " + ChatColor.AQUA + "- resets a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt pause " + ChatColor.AQUA + "- pauses a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt unpause " + ChatColor.AQUA + "- resumes a manhunt game");
             p.sendMessage(ChatColor.YELLOW + "/manhunt list " + ChatColor.AQUA + "- shows a list of players in a manhunt game with their roles");
+            p.sendMessage(ChatColor.YELLOW + "/manhunt rules <rule> value(optional) " + ChatColor.AQUA + "- changes some additional rules of the game (in config.yml)");
             p.sendMessage(ChatColor.YELLOW + "/manhunt help " + ChatColor.AQUA + "- shows a list of manhunt commands");
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
+            return true;
+        }
+        if (args[0].equals("rules")) {
+            if (!p.hasPermission("manhunt.rules") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
+            if (args.length != 3 && args.length != 2) {
+                p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
+                return true;
+            }
+            if (!main.getConfig().contains(args[1])) {
+                p.sendMessage(ChatColor.RED + "There is no such rule. See the config.yml file for more information.");
+                return true;
+            }
+            if (args.length == 2) {
+                p.sendMessage(ChatColor.AQUA + "The value of the rule " + args[1] + " is: " + main.getConfig().get(args[1]));
+                return true;
+            }
+            if (args[1].equals("headStartDuration") || args[1].equals("speedrunnersLives")) {
+                try {
+                    main.getConfig().set(args[1], Integer.parseInt(args[2]));
+                } catch (NumberFormatException e) {
+                    p.sendMessage(ChatColor.RED + "The value must be a number!");
+                    return true;
+                }
+            } else {
+                if (!args[2].equals("true") && !args[2].equals("false")) {
+                    p.sendMessage(ChatColor.RED + "The value must be true or false!");
+                    return true;
+                }
+                main.getConfig().set(args[1], Boolean.parseBoolean(args[2]));
+            }
+            main.saveConfig();
+            p.sendMessage(ChatColor.AQUA + "The value of the rule " + args[1] + " has been changed to: " + args[2]);
             return true;
         }
         if (args[0].equals("add")) {
@@ -253,7 +291,7 @@ public class ManhuntCommand implements CommandExecutor {
             if (main.getConfig().getBoolean("weatherClearOnStart")) {
                 p.getServer().getWorlds().get(0).setStorm(false);
             }
-            seconds = main.getConfig().getInt("headStartDuration");
+            seconds = Math.max(main.getConfig().getInt("headStartDuration"), 0);
             ItemStack item = new ItemStack(Material.COMPASS, 1);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + "nearest speedrunner");
@@ -302,7 +340,7 @@ public class ManhuntCommand implements CommandExecutor {
                     compassMode.add("1");
                     tar.setHealth(20);
                     tar.setFoodLevel(20);
-                    tar.setSaturation(20);
+                    tar.setSaturation(5);
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
                         AdvancementProgress progress = tar.getAdvancementProgress(advancements.next());
@@ -319,7 +357,7 @@ public class ManhuntCommand implements CommandExecutor {
                     locWorld.add(loc);
                     locNether.add(null);
                     locTheEnd.add(null);
-                    lives.add(main.getConfig().getInt("speedrunnersLives"));
+                    lives.add(Math.max(main.getConfig().getInt("speedrunnersLives"), 1));
                     player.setGameMode(GameMode.SURVIVAL);
                     if (main.getConfig().getBoolean("takeAwayOps")) {
                         sOps.add(player.isOp());
@@ -333,7 +371,7 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     player.setHealth(20);
                     player.setFoodLevel(20);
-                    player.setSaturation(20);
+                    player.setSaturation(5);
                     Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
                     while (advancements.hasNext()) {
                         AdvancementProgress progress = player.getAdvancementProgress(advancements.next());
@@ -343,46 +381,37 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             inGame = true;
-            starting = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " second" + (seconds == 1 ? "" : "s") + " remaining!");
-                    for (String s : hunters) {
-                        Player player = Bukkit.getPlayerExact(s);
-                        if (player != null) {
-                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
-                        }
-                    }
-                    for (String s : speedrunners) {
-                        Player player = Bukkit.getPlayerExact(s);
-                        if (player != null) {
-                            player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
-                        }
-                    }
-                    seconds -= 1;
-                    if (seconds == 0) {
-                        starting.cancel();
-                    }
-                }
-            }.runTaskTimer(main, 0, 20);
-            game = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (inGame && seconds == 0) {
+            if (seconds != 0) {
+                starting = new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " second" + (seconds == 1 ? "" : "s") + " remaining!");
                         for (String s : hunters) {
                             Player player = Bukkit.getPlayerExact(s);
                             if (player != null) {
-                                player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
-                                player.setFallDistance(0);
+                                player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
                             }
                         }
                         for (String s : speedrunners) {
                             Player player = Bukkit.getPlayerExact(s);
                             if (player != null) {
-                                player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                                player.sendTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds), "", 0, 20, 10);
                             }
                         }
-                        playersMessage(ChatColor.AQUA + "START!");
+                        seconds -= 1;
+                        if (seconds == 0) {
+                            starting.cancel();
+                        }
+                    }
+                }.runTaskTimer(main, 0, 20);
+            } else {
+                start();
+            }
+            game = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (inGame && seconds == 0 && main.getConfig().getInt("headStartDuration") != 0) {
+                        start();
                         seconds = main.getConfig().getInt("headStartDuration");
                     }
                     for (int i = 0; i < speedrunners.size(); i++) {
@@ -715,6 +744,24 @@ public class ManhuntCommand implements CommandExecutor {
             Player player = Bukkit.getPlayerExact(value);
             if (player != null) {
                 player.sendMessage(s);
+            }
+        }
+    }
+
+    public static void start() {
+        for (String s : hunters) {
+            Player player = Bukkit.getPlayerExact(s);
+            if (player != null) {
+                player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                player.setFallDistance(0);
+                player.sendMessage(ChatColor.AQUA + "START!");
+            }
+        }
+        for (String s : speedrunners) {
+            Player player = Bukkit.getPlayerExact(s);
+            if (player != null) {
+                player.sendTitle(ChatColor.DARK_PURPLE + "START!", "", 0, 20, 10);
+                player.sendMessage(ChatColor.AQUA + "START!");
             }
         }
     }
