@@ -23,6 +23,7 @@ public final class Main extends JavaPlugin {
         new MenuListener(this);
         new DisconnectListener(this);
         new DamageListener(this);
+        new Metrics(this, 21908);
         System.out.println("*********************************************************\n" +
                 "Thank you for using this plugin! <3\n" +
                 "Author: Matistan\n" +
