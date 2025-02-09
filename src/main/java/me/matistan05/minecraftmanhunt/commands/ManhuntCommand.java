@@ -76,8 +76,7 @@ public class ManhuntCommand implements CommandExecutor {
             p.sendMessage(ChatColor.YELLOW + "/manhunt help " + ChatColor.AQUA + "- shows a list of manhunt commands");
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
             return true;
-        }
-        if (args[0].equals("rules")) {
+        } else if (args[0].equals("rules")) {
             if (!p.hasPermission("manhunt.rules") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;
@@ -111,8 +110,7 @@ public class ManhuntCommand implements CommandExecutor {
             main.saveConfig();
             p.sendMessage(ChatColor.AQUA + "The value of the rule " + args[1] + " has been changed to: " + args[2]);
             return true;
-        }
-        if (args[0].equals("add")) {
+        } else if (args[0].equals("add")) {
             if (!p.hasPermission("manhunt.add") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;
@@ -194,8 +192,7 @@ public class ManhuntCommand implements CommandExecutor {
             }
             p.sendMessage(ChatColor.RED + "Wrong manhunt role. For help, type: /manhunt help");
             return true;
-        }
-        if (args[0].equals("remove")) {
+        } else if (args[0].equals("remove")) {
             if (!p.hasPermission("manhunt.remove") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;
@@ -233,6 +230,7 @@ public class ManhuntCommand implements CommandExecutor {
                 } else {
                     speedrunners.remove(target.getName());
                 }
+                // a nie removePlayer(target.getName()); ?
                 count++;
             }
             if (count > 0) {
@@ -241,8 +239,7 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Could not remove " + (args.length == 2 ? "this player!" : "these players!"));
             }
             return true;
-        }
-        if (args[0].equals("start")) {
+        } else if (args[0].equals("start")) {
             if (!p.hasPermission("manhunt.start") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;
@@ -271,15 +268,15 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.YELLOW + "The game has already started!");
                 return true;
             }
-            for (String v : speedrunners) {
-                Player player = Bukkit.getPlayerExact(v);
+            for (String name : speedrunners) {
+                Player player = Bukkit.getPlayerExact(name);
                 if (player == null) {
                     p.sendMessage(ChatColor.RED + "Someone from your game is offline!");
                     return true;
                 }
             }
-            for (String v : hunters) {
-                Player player = Bukkit.getPlayerExact(v);
+            for (String name : hunters) {
+                Player player = Bukkit.getPlayerExact(name);
                 if (player == null) {
                     p.sendMessage(ChatColor.RED + "Someone from your game is offline!");
                     return true;
@@ -303,16 +300,16 @@ public class ManhuntCommand implements CommandExecutor {
             Player tar;
             if (main.getConfig().getBoolean("teleport")) {
                 tpPlayer = null;
-                for (String speed : speedrunners) {
-                    Player pl = Bukkit.getPlayerExact(speed);
+                for (String name : speedrunners) {
+                    Player pl = Bukkit.getPlayerExact(name);
                     if (pl != null) {
                         tpPlayer = pl;
                         break;
                     }
                 }
                 if (tpPlayer == null) {
-                    for (String hun : hunters) {
-                        Player pl = Bukkit.getPlayerExact(hun);
+                    for (String name : hunters) {
+                        Player pl = Bukkit.getPlayerExact(name);
                         if (pl != null) {
                             tpPlayer = pl;
                             break;
@@ -481,8 +478,7 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }.runTaskTimer(main, 20L * seconds, 1);
             return true;
-        }
-        if (args[0].equals("reset")) {
+        } else if (args[0].equals("reset")) {
             if (!p.hasPermission("manhunt.reset") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;
@@ -494,8 +490,7 @@ public class ManhuntCommand implements CommandExecutor {
             p.sendMessage(ChatColor.AQUA + "Manhunt game has been reset!");
             reset();
             return true;
-        }
-        if (args[0].equals("pause")) {
+        } else if (args[0].equals("pause")) {
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -543,8 +538,7 @@ public class ManhuntCommand implements CommandExecutor {
                 }.runTaskLater(main, 1200);
             }
             return true;
-        }
-        if (args[0].equals("unpause")) {
+        } else if (args[0].equals("unpause")) {
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -606,8 +600,7 @@ public class ManhuntCommand implements CommandExecutor {
                 }.runTaskLater(main, 1200);
             }
             return true;
-        }
-        if (args[0].equals("list")) {
+        } else if (args[0].equals("list")) {
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
