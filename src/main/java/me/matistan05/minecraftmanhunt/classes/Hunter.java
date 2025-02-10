@@ -1,19 +1,30 @@
 package me.matistan05.minecraftmanhunt.classes;
 
-public class Hunter {
-    // Hunter's name
-    private final String name;
-    // Whether the hunter was an operator before the game started
-    private final boolean op;
+public class Hunter extends ManhuntPlayer{
     // 0 = tracking nearest speedrunner, 1 = tracking specific speedrunner
     private int compassMode;
     // If compassMode is 1, this is the name of the speedrunner being tracked
-    private int whichSpeedrunner;
+    private String whichSpeedrunner;
 
     public Hunter(String name) {
-        this.name = name;
-        this.op = false;
+        super(name);
         this.compassMode = 0;
-        this.whichSpeedrunner = 0;
+        this.whichSpeedrunner = "";
+    }
+
+    public int getCompassMode() {
+        return compassMode;
+    }
+
+    public void setCompassMode(int compassMode) {
+        this.compassMode = compassMode;
+    }
+
+    public String getWhichSpeedrunner() {
+        return whichSpeedrunner;
+    }
+
+    public void setWhichSpeedrunner(String whichSpeedrunner) {
+        this.whichSpeedrunner = whichSpeedrunner;
     }
 }
