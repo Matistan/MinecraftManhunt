@@ -29,4 +29,6 @@ compassMenu: false
 enablePauses: true
 # Set to true to enable permission checks.
 ## Note: This feature needs a permissions plugin (such as LuckPerms) to work.
-usePermissions: false
+usePermissions: true
+# Set to true to give spectator mode to dead speedrunners.
+spectatorAfterDeath: true
