@@ -1,6 +1,8 @@
 package me.matistan05.minecraftmanhunt.commands;
 
 import me.matistan05.minecraftmanhunt.Main;
+import me.matistan05.minecraftmanhunt.classes.Hunter;
+import me.matistan05.minecraftmanhunt.classes.Speedrunner;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -85,10 +87,10 @@ public class ManhuntCompleter implements TabCompleter {
                 notForTab.add(player.getName());
             }
             if (args[1].equals("speedrunner")) {
-                notForTab.addAll(speedrunners);
+                notForTab.addAll(speedrunners.stream().map(Speedrunner::getName).collect(Collectors.toList()));
             }
             if (args[1].equals("hunter")) {
-                notForTab.addAll(hunters);
+                notForTab.addAll(hunters.stream().map(Hunter::getName).collect(Collectors.toList()));
             }
             List<Player> players = new LinkedList<>(Bukkit.getOnlinePlayers());
             for (String argument : notForTab) {
@@ -114,13 +116,13 @@ public class ManhuntCompleter implements TabCompleter {
                 notForTab.add(player.getName());
             }
             List<String> players = new LinkedList<>();
-            for (String s : speedrunners) {
-                Player player = Bukkit.getPlayerExact(s);
+            for (Speedrunner speedrunnerObject : speedrunners) {
+                Player player = Bukkit.getPlayerExact(speedrunnerObject.getName());
                 if (player == null) continue;
                 players.add(player.getName());
             }
-            for (String h : hunters) {
-                Player player = Bukkit.getPlayerExact(h);
+            for (Hunter hunterObject : hunters) {
+                Player player = Bukkit.getPlayerExact(hunterObject.getName());
                 if (player == null) continue;
                 players.add(player.getName());
             }

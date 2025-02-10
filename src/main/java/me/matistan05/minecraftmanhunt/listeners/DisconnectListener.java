@@ -3,6 +3,7 @@ package me.matistan05.minecraftmanhunt.listeners;
 import me.matistan05.minecraftmanhunt.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -16,19 +17,21 @@ public class DisconnectListener implements Listener {
 
     @EventHandler
     public void DisconnectEvent(PlayerQuitEvent e) {
-        if (inGame && (speedrunners.contains(e.getPlayer().getName()) || hunters.contains(e.getPlayer().getName())) && ((pausePlayers.contains(e.getPlayer().getName()) && pausePlayers.size() < hunters.size() + speedrunners.size()) || (unpausePlayers.contains(e.getPlayer().getName()) && unpausePlayers.size() < hunters.size() + speedrunners.size()))) {
-            if (pausePlayers.contains(e.getPlayer().getName()) && pausePlayers.size() < hunters.size() + speedrunners.size()) {
-                pausePlayers.remove(e.getPlayer().getName());
+        Player p = e.getPlayer();
+        if (inGame && isInGame(p.getName())) {
+            if (pausePlayers.contains(p.getName()) && !paused) {
+                pausePlayers.remove(p.getName());
                 if (pausePlayers.isEmpty()) {
                     pausing.cancel();
                 }
-            } else {
-                unpausePlayers.remove(e.getPlayer().getName());
+                playersMessage(ChatColor.AQUA + p.getName() + " left, so his voting is expired");
+            } else if (unpausePlayers.contains(p.getName()) && paused) {
+                unpausePlayers.remove(p.getName());
                 if (unpausePlayers.isEmpty()) {
                     unpausing.cancel();
                 }
+                playersMessage(ChatColor.AQUA + p.getName() + " left, so his voting is expired");
             }
-            playersMessage(ChatColor.AQUA + e.getPlayer().getName() + " left, so his voting is expired");
         }
     }
 }

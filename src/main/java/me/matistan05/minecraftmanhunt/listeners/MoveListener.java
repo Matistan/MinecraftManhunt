@@ -18,10 +18,10 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void MoveEvent(PlayerMoveEvent e) {
-        if (inGame && ((pausePlayers.size() == (hunters.size() + speedrunners.size()) && (hunters.contains(e.getPlayer().getName()) ||
-                speedrunners.contains(e.getPlayer().getName()))) || (seconds != main.getConfig().getInt("headStartDuration") &&
-                hunters.contains(e.getPlayer().getName())))) {
-            if (e.getFrom().getX() != e.getTo().getX() || e.getFrom().getY() != e.getTo().getY() || e.getFrom().getZ() != e.getTo().getZ()) {
+        if ((paused && isInGame(e.getPlayer().getName())) || (waitingForStart && isHunter(e.getPlayer().getName()))) {
+            if (e.getFrom().getX() != e.getTo().getX() ||
+                    e.getFrom().getY() != e.getTo().getY() ||
+                    e.getFrom().getZ() != e.getTo().getZ()) {
                 e.getPlayer().teleport(e.getFrom());
             }
         }

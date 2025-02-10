@@ -21,10 +21,8 @@ public class DamageListener implements Listener {
     public void DamageEvent(EntityDamageEvent e) {
         if (!(e.getEntity() instanceof Player)) return;
         Player player = (Player) e.getEntity();
-        if (inGame && ((pausePlayers.size() == (hunters.size() + speedrunners.size()) && (hunters.contains(player.getName()) || speedrunners.contains(player.getName()))) ||
-                (seconds != main.getConfig().getInt("headStartDuration") && hunters.contains(player.getName())))) {
+        if (paused && (isInGame(player.getName())) || waitingForStart && isHunter(player.getName())) {
             e.setCancelled(true);
         }
     }
-
 }

@@ -15,7 +15,7 @@ public class RespawnListener implements Listener {
 
     @EventHandler
     public void RespawnEvent(PlayerRespawnEvent e) {
-        if (inGame && hunters.contains(e.getPlayer().getName())) {
+        if ((inGame || waitingForStart) && isHunter(e.getPlayer().getName())) {
             e.getPlayer().getInventory().addItem(compass);
         }
     }

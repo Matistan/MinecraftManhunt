@@ -17,12 +17,12 @@ public class DropListener implements Listener {
 
     @EventHandler
     public void DropEvent(PlayerDropItemEvent e) {
-        if (inGame) {
-            if (hunters.contains(e.getPlayer().getName())) {
-                if (!e.getItemDrop().getItemStack().getItemMeta().hasLore()) return;
-                if (e.getItemDrop().getItemStack().getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!")) {
-                    e.setCancelled(true);
-                }
+        if ((inGame || waitingForStart) && isHunter(e.getPlayer().getName())) {
+            if (!e.getItemDrop().getItemStack().hasItemMeta()) return;
+            if (!e.getItemDrop().getItemStack().getItemMeta().hasLore()) return;
+            if (e.getItemDrop().getItemStack().getItemMeta().getLore().isEmpty()) return;
+            if (e.getItemDrop().getItemStack().getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!")) {
+                e.setCancelled(true);
             }
         }
     }

@@ -21,14 +21,14 @@ public class MenuListener implements Listener {
 
     @EventHandler
     public void MenuClickEvent(InventoryClickEvent e) {
-        if (!inGame || seconds != main.getConfig().getInt("headStartDuration")) return;
+        if (!inGame && !waitingForStart) return;
         if (e.getView().getTitle().equals(ChatColor.RED + "Choose a speedrunner!")) {
             if (e.getCurrentItem() == null) return;
             if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
                 SkullMeta headMeta = (SkullMeta) e.getCurrentItem().getItemMeta();
-                whichSpeedrunner.set(hunters.indexOf(e.getWhoClicked().getName()), headMeta.getOwningPlayer().getName());
-                if (compassMode.get(hunters.indexOf(e.getWhoClicked().getName())).equals("0")) {
-                    compassMode.set(hunters.indexOf(e.getWhoClicked().getName()), "1");
+                getHunter(e.getWhoClicked().getName()).setWhichSpeedrunner(headMeta.getOwningPlayer().getName());
+                if (getHunter(e.getWhoClicked().getName()).getCompassMode() == 0) {
+                    getHunter(e.getWhoClicked().getName()).setCompassMode(1);
                 }
             }
             e.setCancelled(true);

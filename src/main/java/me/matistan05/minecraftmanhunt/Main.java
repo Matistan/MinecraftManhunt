@@ -6,6 +6,7 @@ import me.matistan05.minecraftmanhunt.listeners.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.inGame;
+import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.reset;
 
 public final class Main extends JavaPlugin {
 
@@ -35,7 +36,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         if (inGame) {
-            ManhuntCommand.reset();
+            reset();
         }
     }
 }
