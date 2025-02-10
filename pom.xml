@@ -6,7 +6,7 @@
 
     <groupId>me.matistan05</groupId>
     <artifactId>MinecraftManhunt</artifactId>
-    <version>1.6.2</version>
+    <version>1.7</version>
     <packaging>jar</packaging>
 
     <name>MinecraftManhunt</name>
