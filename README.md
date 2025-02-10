@@ -25,8 +25,8 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 ## Features
 
 - Compass has two modes:
-- - Tracks every speedrunner individually,
-- - Or tracks the nearest one
+- - Tracks every speedrunner individually (right click),
+- - Or tracks the nearest one (left click)
 - Headstart support
 - Heals and feeds players on start
 - Clear inventories and resets achievements on start
@@ -58,20 +58,20 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 
 Use the command `/manhunt rules` or edit the `plugins/MinecraftManhunt/config.yml` file to change the following options:
 
-| Key                 | Description                                                                                 | Type    | recommended                                                   |
-|---------------------|---------------------------------------------------------------------------------------------|---------|---------------------------------------------------------------|
-| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.                      | boolean | true                                                          |
-| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts.                 | boolean | true                                                          |
-| takeAwayOps         | Set to true to take away OPs for the duration of the game.                                  | boolean | true                                                          |
-| clearInventories    | Set to true to clear players inventories when the game starts.                              | boolean | true                                                          |
-| headStartDuration   | Set the time for speedrunners to run away.                                                  | int     | 10                                                            |
-| speedrunnersLives   | Set the amount of lives for speedrunners.                                                   | int     | 1                                                             |
-| trackPortals        | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true                                                          |
-| trackNearestMode    | Set to true to enable mode on the compass to track the nearest speedrunner.                 | boolean | true                                                          |
-| teleport            | Set to true to teleport everyone in the same spot when the game starts.                     | boolean | true                                                          |
-| compassMenu         | Set to true to open a menu to choose which speedrunner to track.                            | boolean | false; true if you're playing with a lot of speedrunners      |
-| enablePauses        | Set to true to enable the pause feature (/manhunt pause).                                   | boolean | true                                                          |
-| usePermissions      | Set to true to require users to have permission to use certain commands.                    | boolean | false; true if you don't trust the people you're playing with |
+| Key                 | Description                                                                                 | Type    | recommended                                              |
+|---------------------|---------------------------------------------------------------------------------------------|---------|----------------------------------------------------------|
+| timeSetDayOnStart   | Set to true to set the time to day automatically when the game starts.                      | boolean | true                                                     |
+| weatherClearOnStart | Set to true to set the weather to clear automatically when the game starts.                 | boolean | true                                                     |
+| takeAwayOps         | Set to true to take away OPs for the duration of the game.                                  | boolean | true                                                     |
+| clearInventories    | Set to true to clear players inventories when the game starts.                              | boolean | true                                                     |
+| headStartDuration   | Set the time for speedrunners to run away.                                                  | int     | 10                                                       |
+| speedrunnersLives   | Set the amount of lives for speedrunners.                                                   | int     | 1                                                        |
+| trackPortals        | Set to true to enable tracking speedrunners portals when they are in a different dimension. | boolean | true                                                     |
+| trackNearestMode    | Set to true to enable mode on the compass to track the nearest speedrunner.                 | boolean | true                                                     |
+| teleport            | Set to true to teleport everyone in the same spot when the game starts.                     | boolean | true                                                     |
+| compassMenu         | Set to true to open a menu to choose which speedrunner to track.                            | boolean | false; true if you're playing with a lot of speedrunners |
+| enablePauses        | Set to true to enable the pause feature (/manhunt pause).                                   | boolean | true                                                     |
+| usePermissions      | Set to true to require users to have permission to use certain commands.                    | boolean | true; false if you trust your friends                    |
 
 ## Permissions
 
