@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -281,14 +282,7 @@ public class ManhuntCommand implements CommandExecutor {
             if (main.getConfig().getBoolean("weatherClearOnStart")) {
                 p.getServer().getWorlds().get(0).setStorm(false);
             }
-            ItemStack item = new ItemStack(Material.COMPASS, 1);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + "nearest speedrunner");
-            List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.BLUE + "This compass is to track speedrunners!");
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-            compass = item;
+            createCompass();
             Player tpPlayer = null;
             if (main.getConfig().getBoolean("teleport")) {
                 for (Speedrunner speedrunnerObject : speedrunners) {
@@ -629,7 +623,7 @@ public class ManhuntCommand implements CommandExecutor {
         Hunter hunterObject = hunters.stream().filter(h -> h.getName().equals(name)).findFirst().orElse(null);
         if (hunterObject != null) {
             Player hunter = Bukkit.getPlayerExact(name);
-            if (inGame) {
+            if (inGame || waitingForStart) {
                 if (main.getConfig().getBoolean("takeAwayOps")) {
                     OfflinePlayer target = Bukkit.getOfflinePlayer(name);
                     target.setOp(hunterObject.isOp());
@@ -692,14 +686,8 @@ public class ManhuntCommand implements CommandExecutor {
             if (i == 36) {
                 i = 40;
             }
-            if (p.getInventory().getItem(i) != null) {
-                if (p.getInventory().getItem(i).hasItemMeta()) {
-                    if (p.getInventory().getItem(i).getItemMeta().hasLore()) {
-                        if (p.getInventory().getItem(i).getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!")) {
-                            return i;
-                        }
-                    }
-                }
+            if (isCompass(p.getInventory().getItem(i))) {
+                return i;
             }
         }
         return 50;
@@ -736,6 +724,32 @@ public class ManhuntCommand implements CommandExecutor {
                 speedrunner.sendMessage(ChatColor.AQUA + "START!");
             }
         }
+    }
+
+    public static void createCompass() {
+        ItemStack item = new ItemStack(Material.COMPASS, 1);
+        ItemMeta meta = item.getItemMeta();
+        NamespacedKey key = new NamespacedKey(main, "ManhuntCompass");
+        meta.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+        meta.setDisplayName(ChatColor.GOLD + "Tracking: " + ChatColor.GREEN + "nearest speedrunner");
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.BLUE + "This compass is to track speedrunners!");
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+        compass = item;
+    }
+
+    public static boolean isCompass(ItemStack itemStack) {
+        if (itemStack == null) return false;
+        if (!itemStack.hasItemMeta() || itemStack.getItemMeta() == null) return false;
+        return (itemStack.getItemMeta().getPersistentDataContainer().has
+                (new NamespacedKey(main, "ManhuntCompass"), PersistentDataType.BYTE));
+//        if (itemStack == null) return false;
+//        if (!itemStack.hasItemMeta()) return false;
+//        if (itemStack.getItemMeta() == null) return false;
+//        if (!itemStack.getItemMeta().hasLore()) return false;
+//        if (itemStack.getItemMeta().getLore() == null) return false;
+//        return itemStack.getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!");
     }
 
     public static boolean isHunter(String name) {

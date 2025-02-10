@@ -25,13 +25,9 @@ public class DeathListener implements Listener {
         Player p = e.getEntity();
         if (isHunter(p.getName())) {
             for (int i = 0; i < e.getDrops().size(); i++) {
-                if (e.getDrops().get(i).hasItemMeta()) {
-                    if (!e.getDrops().get(i).getItemMeta().hasLore()) continue;
-                    if (e.getDrops().get(i).getItemMeta().getLore().isEmpty()) continue;
-                    if (e.getDrops().get(i).getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!")) {
-                        e.getDrops().remove(i);
-                        break;
-                    }
+                if (isCompass(e.getDrops().get(i))) {
+                    e.getDrops().remove(i);
+                    break;
                 }
             }
         } else if (isSpeedrunner(p.getName())) {

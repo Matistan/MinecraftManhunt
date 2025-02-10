@@ -30,10 +30,7 @@ public class InteractListener implements Listener {
     public void InteractEvent(PlayerInteractEvent e) {
         if (!inGame && !waitingForStart) return;
         ItemStack item = e.getItem();
-        if (item == null) return;
-        if (!item.getItemMeta().hasLore()) return;
-        if (item.getItemMeta().getLore().isEmpty()) return;
-        if (!(item.getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!"))) return;
+        if (!isCompass(item)) return;
         Player p = e.getPlayer();
         if (!isHunter(p.getName())) return;
         Action a = e.getAction();
