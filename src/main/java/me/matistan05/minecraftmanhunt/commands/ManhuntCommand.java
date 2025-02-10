@@ -632,7 +632,6 @@ public class ManhuntCommand implements CommandExecutor {
             if (inGame) {
                 if (main.getConfig().getBoolean("takeAwayOps")) {
                     OfflinePlayer target = Bukkit.getOfflinePlayer(name);
-//                    target.getPlayer().getInventory().remove(compassSlot(target.getPlayer())); // TODO: check if works
                     target.setOp(hunterObject.isOp());
                 }
                 if (hunter != null) {
