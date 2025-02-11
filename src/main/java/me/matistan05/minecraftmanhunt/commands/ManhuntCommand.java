@@ -258,7 +258,7 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "There are no hunters!");
                 return true;
             }
-            if (inGame) {
+            if (inGame || waitingForStart) {
                 p.sendMessage(ChatColor.YELLOW + "The game has already started!");
                 return true;
             }
@@ -744,12 +744,6 @@ public class ManhuntCommand implements CommandExecutor {
         if (!itemStack.hasItemMeta() || itemStack.getItemMeta() == null) return false;
         return (itemStack.getItemMeta().getPersistentDataContainer().has
                 (new NamespacedKey(main, "ManhuntCompass"), PersistentDataType.BYTE));
-//        if (itemStack == null) return false;
-//        if (!itemStack.hasItemMeta()) return false;
-//        if (itemStack.getItemMeta() == null) return false;
-//        if (!itemStack.getItemMeta().hasLore()) return false;
-//        if (itemStack.getItemMeta().getLore() == null) return false;
-//        return itemStack.getItemMeta().getLore().get(0).equals(ChatColor.BLUE + "This compass is to track speedrunners!");
     }
 
     public static boolean isHunter(String name) {
