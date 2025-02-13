@@ -661,12 +661,12 @@ public class ManhuntCommand implements CommandExecutor {
 //            player.setGameMode();
 //        }
         if (inGame) {
-            if (waitingForStart) {
-                starting.cancel();
-                waitingForStart = false;
-            }
             game.cancel();
             inGame = false;
+        }
+        if (waitingForStart) {
+            starting.cancel();
+            waitingForStart = false;
         }
         pausePlayers.clear();
         unpausePlayers.clear();
