@@ -594,13 +594,11 @@ public class ManhuntCommand implements CommandExecutor {
     }
 
     public static void reset() {
-        for (int i = 0; i < hunters.size(); i++) {
-            removePlayer(hunters.get(i).getName());
-            i -= 1;
+        while (!hunters.isEmpty()) {
+            removePlayer(hunters.get(0).getName());
         }
-        for (int i = 0; i < speedrunners.size(); i++) {
-            removePlayer(speedrunners.get(i).getName());
-            i -= 1;
+        while (!speedrunners.isEmpty()) {
+            removePlayer(speedrunners.get(0).getName());
         }
         huntersTeam.unregister();
         speedrunnersTeam.unregister();
