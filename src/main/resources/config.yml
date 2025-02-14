@@ -32,3 +32,5 @@ enablePauses: true
 usePermissions: true
 # Set to true to give spectator mode to dead speedrunners.
 spectatorAfterDeath: true
+# Set to true to enable friendly fire.
+friendlyFire: false
