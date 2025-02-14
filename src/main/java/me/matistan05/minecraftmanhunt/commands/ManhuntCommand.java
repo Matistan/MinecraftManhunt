@@ -18,6 +18,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Team;
 
 import java.util.*;
 
@@ -37,6 +38,7 @@ public class ManhuntCommand implements CommandExecutor {
     public static ItemStack compass;
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
+    public static Team huntersTeam, speedrunnersTeam;
 
     public ManhuntCommand(Main main) {
         ManhuntCommand.main = main;
@@ -46,9 +48,7 @@ public class ManhuntCommand implements CommandExecutor {
     public boolean onCommand(CommandSender p, Command cmd, String label, String[] args) {
         if (args.length == 0) {
             p.sendMessage(ChatColor.RED + "You must type an argument. For help, type: /manhunt help");
-            return true;
-        }
-        if (args[0].equals("help")) {
+        } else if (args[0].equals("help")) {
             if (!p.hasPermission("manhunt.help") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 return true;
@@ -71,7 +71,6 @@ public class ManhuntCommand implements CommandExecutor {
             p.sendMessage(ChatColor.YELLOW + "/manhunt rules <rule> value(optional) " + ChatColor.AQUA + "- changes some additional rules of the game (in config.yml)");
             p.sendMessage(ChatColor.YELLOW + "/manhunt help " + ChatColor.AQUA + "- shows a list of manhunt commands");
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
-            return true;
         } else if (args[0].equals("rules")) {
             if (!p.hasPermission("manhunt.rules") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
@@ -105,7 +104,6 @@ public class ManhuntCommand implements CommandExecutor {
             }
             main.saveConfig();
             p.sendMessage(ChatColor.AQUA + "The value of the rule " + args[1] + " has been changed to: " + args[2]);
-            return true;
         } else if (args[0].equals("add")) {
             if (!p.hasPermission("manhunt.add") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
@@ -115,10 +113,10 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
-            if (inGame) {
-                p.sendMessage(ChatColor.RED + "The game has already started!");
-                return true;
-            }
+//            if (inGame) {
+//                p.sendMessage(ChatColor.RED + "The game has already started!");
+//                return true;
+//            }
             int count = 0;
             if (args[1].equals("speedrunner")) {
                 if (args[2].equals("@a")) {
@@ -128,6 +126,7 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                     for (Player target : Bukkit.getOnlinePlayers()) {
                         if (isSpeedrunner(target.getName())) continue;
+                        if (isHunter(target.getName()) && (inGame || waitingForStart)) continue;
                         hunters.removeIf(h -> h.getName().equals(target.getName()));
                         speedrunners.add(new Speedrunner(target.getName()));
                         count++;
@@ -187,7 +186,6 @@ public class ManhuntCommand implements CommandExecutor {
                 return true;
             }
             p.sendMessage(ChatColor.RED + "Wrong manhunt role. For help, type: /manhunt help");
-            return true;
         } else if (args[0].equals("remove")) {
             if (!p.hasPermission("manhunt.remove") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
@@ -232,7 +230,6 @@ public class ManhuntCommand implements CommandExecutor {
             } else {
                 p.sendMessage(ChatColor.RED + "Could not remove " + (args.length == 2 ? "this player!" : "these players!"));
             }
-            return true;
         } else if (args[0].equals("start")) {
             if (!p.hasPermission("manhunt.start") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
@@ -302,10 +299,20 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }
             }
+            huntersTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam("hunters");
+            huntersTeam.setAllowFriendlyFire(main.getConfig().getBoolean("friendlyFire"));
+            huntersTeam.setColor(ChatColor.RED);
+            huntersTeam.setPrefix(ChatColor.DARK_RED + "Hunter ");
+
+            speedrunnersTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam("speedrunners");
+            speedrunnersTeam.setAllowFriendlyFire(main.getConfig().getBoolean("friendlyFire"));
+            speedrunnersTeam.setColor(ChatColor.GREEN);
+            speedrunnersTeam.setPrefix(ChatColor.DARK_GREEN + "Speedrunner ");
+
             for (Hunter hunterObject : hunters) {
-                unpausePlayers.add(hunterObject.getName());
                 Player hunter = Bukkit.getPlayerExact(hunterObject.getName());
                 if (hunter != null) {
+                    huntersTeam.addEntry(hunter.getName());
                     if (main.getConfig().getBoolean("clearInventories")) {
                         hunter.getInventory().clear();
                     }
@@ -332,9 +339,9 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             for (Speedrunner speedrunnerObject : speedrunners) {
-                unpausePlayers.add(speedrunnerObject.getName());
                 Player speedrunner = Bukkit.getPlayerExact(speedrunnerObject.getName());
                 if (speedrunner != null) {
+                    speedrunnersTeam.addEntry(speedrunner.getName());
                     speedrunnerObject.setLocWorld(speedrunner.getLocation());
                     speedrunnerObject.setLocNether(null);
                     speedrunnerObject.setLocTheEnd(null);
@@ -374,7 +381,6 @@ public class ManhuntCommand implements CommandExecutor {
                         inGame = true;
                         waitingForStart = false;
                         start();
-                        seconds = main.getConfig().getInt("headStartDuration");
                         starting.cancel();
                     } else {
                         playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " second" + (seconds == 1 ? "" : "s") + " remaining!");
@@ -465,7 +471,6 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }
             }.runTaskTimer(main, 0, 1);
-            return true;
         } else if (args[0].equals("reset")) {
             if (!p.hasPermission("manhunt.reset") && main.getConfig().getBoolean("usePermissions")) {
                 p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
@@ -477,7 +482,6 @@ public class ManhuntCommand implements CommandExecutor {
             }
             p.sendMessage(ChatColor.AQUA + "Manhunt game has been reset!");
             reset();
-            return true;
         } else if (args[0].equals("pause")) {
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
@@ -526,7 +530,6 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }.runTaskLater(main, 1200);
             }
-            return true;
         } else if (args[0].equals("unpause")) {
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
@@ -589,7 +592,6 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }.runTaskLater(main, 1200);
             }
-            return true;
         } else if (args[0].equals("list")) {
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
@@ -613,9 +615,9 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             p.sendMessage(ChatColor.GREEN + "----------------------------------");
-            return true;
+        } else {
+            p.sendMessage(ChatColor.RED + "Wrong argument. For help, type: /manhunt help");
         }
-        p.sendMessage(ChatColor.RED + "Wrong argument. For help, type: /manhunt help");
         return true;
     }
 
@@ -633,6 +635,7 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             hunters.removeIf(h -> h.getName().equals(name));
+            huntersTeam.removeEntry(name);
         } else {
             Speedrunner speedrunnerObject = speedrunners.stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
             if (speedrunnerObject != null) {
@@ -643,6 +646,7 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }
                 speedrunners.removeIf(s -> s.getName().equals(name));
+                speedrunnersTeam.removeEntry(name);
             }
         }
     }
@@ -656,6 +660,8 @@ public class ManhuntCommand implements CommandExecutor {
             removePlayer(speedrunners.get(i).getName());
             i -= 1;
         }
+        huntersTeam.unregister();
+        speedrunnersTeam.unregister();
 //        for (int i = 0; i < spectators.size(); i++) {
 //            Player player = Bukkit.getPlayerExact(spectators.get(i));
 //            player.setGameMode();
