@@ -10,10 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class DamageListener implements Listener {
-    private final Main main;
-
     public DamageListener(Main main) {
-        this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
 

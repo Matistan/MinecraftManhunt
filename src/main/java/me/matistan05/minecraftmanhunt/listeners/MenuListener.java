@@ -12,10 +12,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class MenuListener implements Listener {
-    private final Main main;
-
     public MenuListener(Main main) {
-        this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
 

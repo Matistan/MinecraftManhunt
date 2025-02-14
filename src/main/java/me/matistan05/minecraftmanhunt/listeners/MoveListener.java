@@ -9,10 +9,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class MoveListener implements Listener {
-    private final Main main;
-
     public MoveListener(Main main) {
-        this.main = main;
         Bukkit.getPluginManager().registerEvents(this, main);
     }
 

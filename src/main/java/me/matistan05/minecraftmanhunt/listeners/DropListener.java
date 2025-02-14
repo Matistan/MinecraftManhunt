@@ -10,7 +10,6 @@ import static me.matistan05.minecraftmanhunt.commands.ManhuntCommand.*;
 
 public class DropListener implements Listener {
     public DropListener(Main main) {
-
         Bukkit.getPluginManager().registerEvents(this, main);
     }
 
