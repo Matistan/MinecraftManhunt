@@ -33,6 +33,7 @@ There are two teams: hunters and speedrunners. Hunters have to kill all the spee
 - Time set day and weather clear on start
 - When a speedrunner is in a different dimension, compass will display it and will track their portal
 - Need to take a break during the game? Have to go to the restroom? I know that the manhunt game can last even few hours, so I've made the feature to pause the game! During this time, you're invincible and no one can move, so you'll be safe. Then you can resume the game and continue playing!
+- `/teammsg` support: you can send a message to your team very easily!
 
 ## How to use it
 
