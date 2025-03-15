@@ -18,6 +18,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.*;
@@ -26,7 +27,7 @@ public class ManhuntCommand implements CommandExecutor {
     private static Main main;
     public static List<Hunter> hunters = new ArrayList<>();
     public static List<Speedrunner> speedrunners = new ArrayList<>();
-    public static int seconds;
+    public static int secondsToStart;
     public static boolean waitingForStart = false;
     public static boolean paused = false;
     public static boolean inGame = false;
@@ -36,7 +37,7 @@ public class ManhuntCommand implements CommandExecutor {
     public static ItemStack compass;
     public static List<String> pausePlayers = new LinkedList<>();
     public static List<String> unpausePlayers = new LinkedList<>();
-    public static Team huntersTeam, speedrunnersTeam;
+    public static Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
     public static Player findPlayer;
 
     public ManhuntCommand(Main main) {
@@ -309,12 +310,13 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }
             }
-            huntersTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam("hunters");
+
+            Team huntersTeam = scoreboard.registerNewTeam("hunters");
             huntersTeam.setAllowFriendlyFire(main.getConfig().getBoolean("friendlyFire"));
             huntersTeam.setColor(ChatColor.RED);
             huntersTeam.setPrefix(ChatColor.DARK_RED + "Hunter ");
 
-            speedrunnersTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam("speedrunners");
+            Team speedrunnersTeam = scoreboard.registerNewTeam("speedrunners");
             speedrunnersTeam.setAllowFriendlyFire(main.getConfig().getBoolean("friendlyFire"));
             speedrunnersTeam.setColor(ChatColor.GREEN);
             speedrunnersTeam.setPrefix(ChatColor.DARK_GREEN + "Speedrunner ");
@@ -326,19 +328,19 @@ public class ManhuntCommand implements CommandExecutor {
                 setUpPlayer(speedrunnerObject.getName(), false);
             }
             waitingForStart = true;
-            seconds = Math.max(main.getConfig().getInt("headStartDuration"), 0);
+            secondsToStart = Math.max(main.getConfig().getInt("headStartDuration"), 0);
             starting = new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (seconds == 0) {
+                    if (secondsToStart == 0) {
                         inGame = true;
                         waitingForStart = false;
                         start();
                         starting.cancel();
                     } else {
-                        playersMessage(ChatColor.BLUE + String.valueOf(seconds) + " second" + (seconds == 1 ? "" : "s") + " remaining!");
-                        playersTitle(ChatColor.DARK_PURPLE + String.valueOf(seconds));
-                        seconds -= 1;
+                        playersMessage(ChatColor.BLUE + String.valueOf(secondsToStart) + " second" + (secondsToStart == 1 ? "" : "s") + " remaining!");
+                        playersTitle(ChatColor.DARK_PURPLE + String.valueOf(secondsToStart));
+                        secondsToStart -= 1;
                     }
                 }
             }.runTaskTimer(main, 0, 20);
@@ -577,7 +579,8 @@ public class ManhuntCommand implements CommandExecutor {
                 }
             }
             hunters.removeIf(h -> h.getName().equals(name));
-            huntersTeam.removeEntry(name);
+            Team huntersTeam = scoreboard.getTeam("hunters");
+            if (huntersTeam != null) huntersTeam.removeEntry(name);
         } else {
             Speedrunner speedrunnerObject = speedrunners.stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
             if (speedrunnerObject != null) {
@@ -588,7 +591,8 @@ public class ManhuntCommand implements CommandExecutor {
                     }
                 }
                 speedrunners.removeIf(s -> s.getName().equals(name));
-                speedrunnersTeam.removeEntry(name);
+                Team speedrunnersTeam = scoreboard.getTeam("speedrunners");
+                if (speedrunnersTeam != null) speedrunnersTeam.removeEntry(name);
             }
         }
     }
@@ -600,8 +604,10 @@ public class ManhuntCommand implements CommandExecutor {
         while (!speedrunners.isEmpty()) {
             removePlayer(speedrunners.get(0).getName());
         }
-        huntersTeam.unregister();
-        speedrunnersTeam.unregister();
+        Team huntersTeam = scoreboard.getTeam("hunters");
+        if (huntersTeam != null) huntersTeam.unregister();
+        Team speedrunnersTeam = scoreboard.getTeam("speedrunners");
+        if (speedrunnersTeam != null) speedrunnersTeam.unregister();
         if (inGame) {
             game.cancel();
             inGame = false;
@@ -714,7 +720,8 @@ public class ManhuntCommand implements CommandExecutor {
                 progress.revokeCriteria(s);
         }
         if (isHunter) {
-            huntersTeam.addEntry(name);
+            Team huntersTeam = scoreboard.getTeam("hunters");
+            if (huntersTeam != null) huntersTeam.addEntry(name);
             Hunter hunterObject = getHunter(name);
             player.getInventory().addItem(compass);
             hunterObject.setWhichSpeedrunner(speedrunners.get(0).getName());
@@ -724,7 +731,8 @@ public class ManhuntCommand implements CommandExecutor {
                 player.setOp(false);
             }
         } else {
-            speedrunnersTeam.addEntry(name);
+            Team speedrunnersTeam = scoreboard.getTeam("speedrunners");
+            if (speedrunnersTeam != null) speedrunnersTeam.addEntry(name);
             Speedrunner speedrunnerObject = getSpeedrunner(name);
             if (player.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
                 speedrunnerObject.setLocWorld(player.getLocation());
