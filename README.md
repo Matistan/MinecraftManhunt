@@ -78,16 +78,18 @@ Use the command `/manhunt rules` or edit the `plugins/MinecraftManhunt/config.ym
 
 If `usePermissions` is set to `true` in the `config.yml` file, players without ops will need the following permissions to use the commands:
 
-| Permission      | Description                                             |
-|-----------------|---------------------------------------------------------|
-| manhunt.manhunt | Allows the player to use all `/manhunt` commands.       |
-| manhunt.add     | Allows the player to use the `/manhunt add` command.    |
-| manhunt.remove  | Allows the player to use the `/manhunt remove` command. |
-| manhunt.start   | Allows the player to use the `/manhunt start` command.  |
-| manhunt.reset   | Allows the player to use the `/manhunt reset` command.  |
-| manhunt.list    | Allows the player to use the `/manhunt list` command.   |
-| manhunt.rules   | Allows the player to use the `/manhunt rules` command.  |
-| manhunt.help    | Allows the player to use the `/manhunt help` command.   |
+| Permission      | Description                                                                |
+|-----------------|----------------------------------------------------------------------------|
+| manhunt.manhunt | Allows the player to use all `/manhunt` commands.                          |
+| manhunt.add     | Allows the player to use the `/manhunt add` command.                       |
+| manhunt.remove  | Allows the player to use the `/manhunt remove` command.                    |
+| manhunt.start   | Allows the player to use the `/manhunt start` command.                     |
+| manhunt.reset   | Allows the player to use the `/manhunt reset` command.                     |
+| manhunt.pause   | Allows the player to pause the game without the consent of other players   |
+| manhunt.unpause | Allows the player to unpause the game without the consent of other players |
+| manhunt.list    | Allows the player to use the `/manhunt list` command.                      |
+| manhunt.rules   | Allows the player to use the `/manhunt rules` command.                     |
+| manhunt.help    | Allows the player to use the `/manhunt help` command.                      |
 
 ### Bugs & Issues
 

@@ -25,12 +25,13 @@ public final class Main extends JavaPlugin {
         new DisconnectListener(this);
         new DamageListener(this);
         new Metrics(this, 21908);
-        JavaPlugin.getPlugin(this.getClass()).getLogger().info("*********************************************************\n" +
-                                                                    "Thank you for using this plugin! <3\n" +
-                                                                    "Author: Matistan\n" +
-                                                                    "If you enjoy this plugin, please rate it on spigotmc.org:\n" +
-                                                                    "https://www.spigotmc.org/resources/manhunt.109010/\n" +
-                                                                    "*********************************************************");
+        JavaPlugin.getPlugin(this.getClass()).getLogger().info(
+                "\n\n*********************************************************\n" +
+                        "Thank you for using this plugin! <3\n" +
+                        "Author: Matistan\n" +
+                        "If you enjoy this plugin, please rate it on spigotmc.org:\n" +
+                        "https://www.spigotmc.org/resources/manhunt.109010/\n" +
+                        "*********************************************************\n");
     }
 
     @Override

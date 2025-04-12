@@ -250,10 +250,6 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
-            if (p instanceof Player && !isInGame(p.getName())) {
-                p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
-                return true;
-            }
             if (speedrunners.size() + hunters.size() == 0) {
                 p.sendMessage(ChatColor.RED + "There are no hunters and speedrunners!");
                 return true;
@@ -431,16 +427,12 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
-            if (!(p instanceof Player)) {
-                p.sendMessage(ChatColor.RED + "Only players can use this command!");
+            if (!p.hasPermission("manhunt.pause") && main.getConfig().getBoolean("usePermissions") && !isInGame(p.getName())) {
+                p.sendMessage(ChatColor.RED + "You have to be in a game to vote for pause, or need special permission!");
                 return true;
             }
             if (!inGame) {
                 p.sendMessage(ChatColor.RED + "There is no running manhunt game!");
-                return true;
-            }
-            if (!isInGame(p.getName())) {
-                p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
                 return true;
             }
             if (!main.getConfig().getBoolean("enablePauses")) {
@@ -455,14 +447,14 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You have already voted to pause the game!");
                 return true;
             }
+            if (p.hasPermission("manhunt.pause")) {
+                pauseGame(p);
+                return true;
+            }
             pausePlayers.add(p.getName());
             playersMessage(ChatColor.AQUA + p.getName() + " wants to pause the game! (" + pausePlayers.size() + "/" + (hunters.size() + speedrunners.size()) + ")");
             if (pausePlayers.size() == hunters.size() + speedrunners.size()) {
-                paused = true;
-                pausing.cancel();
-                unpausePlayers.clear();
-                playersMessage(ChatColor.AQUA + "Game paused!");
-                p.getServer().getWorlds().get(0).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+                pauseGame(p);
                 return true;
             }
             if (pausePlayers.size() == 1) {
@@ -479,16 +471,12 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
             }
-            if (!(p instanceof Player)) {
-                p.sendMessage(ChatColor.RED + "Only players can use this command!");
+            if (!p.hasPermission("manhunt.unpause") && main.getConfig().getBoolean("usePermissions") && !isInGame(p.getName())) {
+                p.sendMessage(ChatColor.RED + "You have to be in a game to vote for unpause, or need special permission!");
                 return true;
             }
             if (!inGame) {
                 p.sendMessage(ChatColor.RED + "There is no running manhunt game!");
-                return true;
-            }
-            if (!isInGame(p.getName())) {
-                p.sendMessage(ChatColor.RED + "You are not in a manhunt game!");
                 return true;
             }
             if (!main.getConfig().getBoolean("enablePauses")) {
@@ -503,28 +491,14 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "You have already voted to unpause the game!");
                 return true;
             }
+            if (p.hasPermission("manhunt.unpause")) {
+                unpauseGame(p);
+                return true;
+            }
             unpausePlayers.add(p.getName());
             playersMessage(ChatColor.AQUA + p.getName() + " wants to unpause the game! (" + unpausePlayers.size() + "/" + (hunters.size() + speedrunners.size()) + ")");
             if (unpausePlayers.size() == hunters.size() + speedrunners.size()) {
-                paused = false;
-                unpausing.cancel();
-                pausePlayers.clear();
-                playersMessage(ChatColor.AQUA + "Game unpaused!");
-                p.getServer().getWorlds().get(0).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
-                for (Hunter hunterObject : hunters) {
-                    Player hunter = Bukkit.getPlayerExact(hunterObject.getName());
-                    if (hunter != null) {
-                        hunter.setFallDistance(0);
-                        hunter.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 255));
-                    }
-                }
-                for (Speedrunner speedrunnerObject : speedrunners) {
-                    Player speedrunner = Bukkit.getPlayerExact(speedrunnerObject.getName());
-                    if (speedrunner != null) {
-                        speedrunner.setFallDistance(0);
-                        speedrunner.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 255));
-                    }
-                }
+                unpauseGame(p);
                 return true;
             }
             if (unpausePlayers.size() == 1) {
@@ -537,6 +511,10 @@ public class ManhuntCommand implements CommandExecutor {
                 }.runTaskLater(main, 1200);
             }
         } else if (args[0].equals("list")) {
+            if (!p.hasPermission("manhunt.list") && main.getConfig().getBoolean("usePermissions")) {
+                p.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                return true;
+            }
             if (args.length != 1) {
                 p.sendMessage(ChatColor.RED + "Wrong usage of this command. For help, type: /manhunt help");
                 return true;
@@ -545,20 +523,20 @@ public class ManhuntCommand implements CommandExecutor {
                 p.sendMessage(ChatColor.RED + "There is no player in your game!");
                 return true;
             }
-            p.sendMessage(ChatColor.GREEN + "------- " + ChatColor.WHITE + " Minecraft Manhunt " + ChatColor.GREEN + "----------");
+            p.sendMessage(ChatColor.YELLOW + "-------" + ChatColor.WHITE + " Minecraft Manhunt " + ChatColor.YELLOW + "-------");
             if (!speedrunners.isEmpty()) {
-                p.sendMessage(ChatColor.GOLD + "Speedrunners:");
+                p.sendMessage(ChatColor.GREEN + "Speedrunners:");
                 for (Speedrunner speedrunnerObject : speedrunners) {
-                    p.sendMessage(ChatColor.AQUA + speedrunnerObject.getName());
+                    p.sendMessage(ChatColor.DARK_GREEN + speedrunnerObject.getName());
                 }
             }
             if (!hunters.isEmpty()) {
-                p.sendMessage(ChatColor.GOLD + "Hunters:");
+                p.sendMessage(ChatColor.RED + "Hunters:");
                 for (Hunter hunterObject : hunters) {
-                    p.sendMessage(ChatColor.AQUA + hunterObject.getName());
+                    p.sendMessage(ChatColor.DARK_RED + hunterObject.getName());
                 }
             }
-            p.sendMessage(ChatColor.GREEN + "----------------------------------");
+            p.sendMessage(ChatColor.YELLOW + "----------------------------------");
         } else {
             p.sendMessage(ChatColor.RED + "Wrong argument. For help, type: /manhunt help");
         }
@@ -566,7 +544,7 @@ public class ManhuntCommand implements CommandExecutor {
     }
 
     public static void removePlayer(String name) {
-        Hunter hunterObject = hunters.stream().filter(h -> h.getName().equals(name)).findFirst().orElse(null);
+        Hunter hunterObject = getHunter(name);
         if (hunterObject != null) {
             Player hunter = Bukkit.getPlayerExact(name);
             if (inGame || waitingForStart) {
@@ -582,9 +560,9 @@ public class ManhuntCommand implements CommandExecutor {
             Team huntersTeam = scoreboard.getTeam("hunters");
             if (huntersTeam != null) huntersTeam.removeEntry(name);
         } else {
-            Speedrunner speedrunnerObject = speedrunners.stream().filter(s -> s.getName().equals(name)).findFirst().orElse(null);
+            Speedrunner speedrunnerObject = getSpeedrunner(name);
             if (speedrunnerObject != null) {
-                if (inGame) {
+                if (inGame || waitingForStart) {
                     if (main.getConfig().getBoolean("takeAwayOps")) {
                         OfflinePlayer target = Bukkit.getOfflinePlayer(name);
                         target.setOp(speedrunnerObject.isOp());
@@ -752,6 +730,36 @@ public class ManhuntCommand implements CommandExecutor {
                 player.setOp(false);
             }
         }
+    }
+
+    public static void unpauseGame(CommandSender p) {
+        paused = false;
+        if (unpausing != null && !unpausing.isCancelled()) unpausing.cancel();
+        pausePlayers.clear();
+        playersMessage(ChatColor.AQUA + "Game unpaused!");
+        p.getServer().getWorlds().get(0).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+        for (Hunter hunterObject : hunters) {
+            Player hunter = Bukkit.getPlayerExact(hunterObject.getName());
+            if (hunter != null) {
+                hunter.setFallDistance(0);
+                hunter.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 255));
+            }
+        }
+        for (Speedrunner speedrunnerObject : speedrunners) {
+            Player speedrunner = Bukkit.getPlayerExact(speedrunnerObject.getName());
+            if (speedrunner != null) {
+                speedrunner.setFallDistance(0);
+                speedrunner.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 255));
+            }
+        }
+    }
+
+    public static void pauseGame(CommandSender p) {
+        paused = true;
+        if (pausing != null && !pausing.isCancelled()) pausing.cancel();
+        unpausePlayers.clear();
+        playersMessage(ChatColor.AQUA + "Game paused!");
+        p.getServer().getWorlds().get(0).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
     }
 
     public static boolean isHunter(String name) {
